@@ -1,322 +1,435 @@
 ---
-name: csv-github-query
-description: >
-  Download the BoneHub public datasets CSV from GitHub and answer user questions about
-  its contents — filtering, searching, summarizing, or analyzing the data.
+name: bonehub-public-datasets-query
+description: Query the BoneHub public datasets CSV - filter by columns, search within semicolon-separated values, and return results.
 ---
 
-# CSV GitHub Query Skill
+# BoneHub Public Datasets Query Instructions
 
-## Purpose
+## Data Source
 
-This skill fetches a fixed, known CSV file from GitHub and answers any question the user
-has about its data — filtering rows, summarizing columns, finding specific values,
-computing aggregates, and more.
+**The CSV file must be uploaded to Claude along with this skill file.**
 
----
-
-## The Data Source
-
-The CSV is always fetched from this hardcoded raw URL (do NOT ask the user for a URL):
-
+Users should upload `bonehub_public_datasets.csv` from:
 ```
-https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.csv
+https://github.com/BoneHub/Public-Datasets/blob/main/data/bonehub_public_datasets.csv
 ```
 
 ---
 
-## Step-by-Step Procedure
+## Important: Semicolon-Separated Values
 
-⚠️ **IMPORTANT:** Follow steps in order. Step 1 (Download CSV) must complete before proceeding to Step 2. Skipping Step 1 will cause `FileNotFoundError`.
+**Many columns contain multiple values separated by `;` symbol.**
 
-### 1. Download & Cache the CSV (Required First Step)
+Examples:
+- `Primary Imaged Regions`: `Pelvis; Hip; Upper Leg`
+- `Available 3D Bone Shapes`: `Femur; Tibia; Fibula`
+- `Available Information per Subject`: `Age; Gender; Height; Weight`
 
-⚠️ **CRITICAL:** This step MUST be completed first or all subsequent operations will fail with `FileNotFoundError`.
+**When filtering these columns, use `.str.contains()` to search within the semicolon-separated list.**
 
-**Do NOT use `curl` or any bash network command** — the bash environment has no network access.
+---
 
-Instead:
+## Step 1: Load the Uploaded CSV File
 
-1. **Fetch the CSV** using the `web_fetch` tool with this URL:
-   ```
-   https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.csv
-   ```
-
-2. **Write to disk immediately** using `create_file` tool:
-   ```
-   Path: /home/claude/data.csv
-   Content: <paste the entire CSV text from web_fetch output>
-   ```
-
-3. **Verify the file exists:**
-   ```bash
-   ls -la /home/claude/data.csv
-   wc -l /home/claude/data.csv
-   ```
-
-4. **Only after verification**, proceed to Step 2.
-
-**Error Recovery:** If you see `FileNotFoundError: /home/claude/data.csv`, it means this step was skipped or the file write failed. Go back and repeat steps 1-3.
-
-### 2. Optimize Data Loading
-
-For **efficient processing**, use an optimized pandas loading strategy:
-
-```python
-import pandas as pd
-import numpy as np
-
-# Load with automatic dtype optimization
-df = pd.read_csv(
-    '/home/claude/data.csv',
-    dtype_backend='numpy_nullable',  # Better memory efficiency
-    low_memory=True,                  # Process in chunks
-)
-
-# For VERY large files (>500 MB), use chunked reading:
-# chunks = pd.read_csv('/home/claude/data.csv', chunksize=10000)
-# df = pd.concat([chunk for chunk in chunks], ignore_index=True)
-
-# Optimize dtypes to reduce memory footprint
-def optimize_dtypes(df):
-    for col in df.select_dtypes(include=['object']).columns:
-        if df[col].nunique() < len(df) * 0.05:  # Few unique values
-            df[col] = df[col].astype('category')
-    return df
-
-df = optimize_dtypes(df)
-```
-
-### 3. Build a Schema Index (First Load Only)
-
-Before answering questions, quickly inspect and cache column metadata:
-
-```python
-# This runs once per conversation
-schema = {
-    'columns': df.columns.tolist(),
-    'dtypes': df.dtypes.to_dict(),
-    'row_count': len(df),
-    'numeric_cols': df.select_dtypes(include=[np.number]).columns.tolist(),
-    'text_cols': df.select_dtypes(include=['object', 'string']).columns.tolist(),
-    'nulls': df.isnull().sum().to_dict(),
-}
-print(f"Loaded {schema['row_count']:,} rows | Memory: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
-print(f"Columns: {schema['columns']}")
-```
-
-Keep this metadata in memory for fast subsequent operations.
-
-### 4. Answer the User's Question — Optimized Patterns
-
-**Always use vectorized pandas operations** (never loop row-by-row). Pandas vectorized operations are 10-100x faster.
-
-#### Optimized Query Patterns
-
-| User intent | **Optimized Pandas approach** | Why faster |
-|---|---|---|
-| "Show rows where X = Y" | `df[df['X'] == 'Y'].head(20)` | Use boolean indexing, limit output |
-| "Find rows where X > N" | `df.loc[df['X'] > N]` (use `.loc` for label-based indexing) | Direct index lookup |
-| "What is the average of X?" | `df['X'].mean()` | Single-pass vectorized operation |
-| "Top 10 by X" | `df.nlargest(10, 'X')` instead of `df.sort_values('X').tail(10)` | Optimized sorting algorithm |
-| "Count by category" | `df['X'].value_counts(sort=True)` | C-optimized aggregation |
-| "Search for keyword in text" | `df[df['col'].str.contains('keyword', case=False, na=False)]` with `.loc` if filtering | Vectorized string matching |
-| "Unique values in column" | `df['X'].unique()` then `.value_counts()` | Vectorized; avoid loops |
-| "Group & aggregate" | `df.groupby('X')['Y'].agg(['mean', 'count', 'std'])` | Highly optimized grouped operations |
-| "Filter multiple conditions" | `df[(df['A'] > 5) & (df['B'] == 'Y')]` (use `&` not `and`) | Boolean indexing is fast |
-| **Avoid:** applying functions row-by-row | DO NOT use `df.apply()` on large datasets | Extremely slow; use vectorized alternatives |
-
-#### Performance Tips for Large DataFrames
-
-```python
-# ✅ FAST: Vectorized operations
-result = df[df['col'].isin(['a', 'b', 'c'])].groupby('category')['value'].sum()
-
-# ❌ SLOW: Row-by-row processing (NEVER do this)
-# result = df.apply(lambda row: ..., axis=1)
-
-# ✅ FAST: Filter before aggregating
-result = df[df['year'] >= 2020].groupby('region')['sales'].mean()
-
-# ✅ FAST: Use categorical dtypes for grouped queries
-df['region'] = df['region'].astype('category')
-result = df.groupby('region')['value'].sum()
-
-# ✅ FAST: Pre-sort for multiple queries on same column
-df = df.sort_values('date')
-early = df[df['date'] < '2021-01-01']
-late = df[df['date'] >= '2021-01-01']
-```
-
-**Example optimized workflow:**
-
-```python
-import pandas as pd
-import numpy as np
-
-df = pd.read_csv('/home/claude/data.csv', low_memory=True)
-df['date'] = pd.to_datetime(df['date'], errors='coerce')  # Convert once
-df['category'] = df['category'].astype('category')
-
-# Answer the question with vectorized operations
-result = df[df['date'] >= '2020-01-01'].groupby('category')['value'].agg(['mean', 'count'])
-print(result)
-```
-
-### 5. Present Results Clearly & Efficiently
-
-- **Answer first:** Direct answer in plain language before showing data.
-- **Limit output:** Always use `.head(20)` or `.iloc[:20]` to cap displayed rows — huge tables are slow to render.
-- **Show counts:** Report total rows matching the query, not just displayed rows.
-- **Format efficiently:** Use `to_string(max_rows=20)` for cleaner display:
-  ```python
-  result = df[df['col'] > threshold].head(20)
-  print(result.to_string())
-  print(f"\n... and {len(df[df['col'] > threshold]) - 20:,} more rows")
-  ```
-- **Save large results:** If the user asks for detailed results, save to file instead of displaying:
-  ```python
-  filtered = df[df['condition'] == True]
-  if len(filtered) > 100:
-      filtered.to_csv('/mnt/user-data/outputs/result.csv', index=False)
-      print(f"Saved {len(filtered):,} rows to result.csv")
-  else:
-      print(filtered.to_string())
-  ```
-- **Use summaries for big data:** Instead of showing all rows, provide aggregates:
-  ```python
-  # Instead of: print(df[df['value'] > 100])
-  # Do this: print(df[df['value'] > 100].groupby('category').size())
-  ```
-
-### 6. Handle Follow-Up Questions — Session Caching
-
-**For multiple questions in the same conversation:**
-
-1. **Load CSV once** — Keep the DataFrame in memory across follow-up questions. Don't reload.
-2. **Reuse schema metadata** — Store column names, dtypes, and numeric/text columns in a dict after first load.
-3. **Cache filtered subsets** — If the user asks multiple questions about the same subset (e.g. "all 2021 data"), cache that filtered DataFrame.
-4. **Pre-compute indexes** — For repeated grouped queries, set the index once:
-   ```python
-   df = df.set_index('date')  # Fast subsequent lookups by date
-   ```
-
-**Example multi-question workflow:**
+**The user must upload the CSV file (`bonehub_public_datasets.csv`) to this conversation along with this skill file.**
 
 ```python
 import pandas as pd
 
-# Question 1: Load and optimize
-df = pd.read_csv('/home/claude/data.csv', low_memory=True)
-df['date'] = pd.to_datetime(df['date'], errors='coerce')
+# Read the uploaded CSV file
+df = pd.read_csv('/mnt/data/bonehub_public_datasets.csv')
 
-# Question 2: Reuse df, no reload
-result = df[df['category'] == 'A'].groupby('date')['value'].mean()
-
-# Question 3: Cache subset
-df_2021 = df[df['date'].dt.year == 2021]
-result = df_2021.groupby('region')['value'].sum()  # Fast—using cached subset
-
-# Question 4: Use cache again
-result = df_2021['region'].value_counts()  # No filtering needed
+print(f"Loaded {len(df)} datasets")
+print(f"Columns: {list(df.columns)}")
 ```
 
-**If the user asks about a different CSV**, go back to Step 1 and reload.
+**Note:** The file path is `/mnt/data/bonehub_public_datasets.csv` for files uploaded to Claude.
 
 ---
 
-## Performance Optimization Summary
+## Keyword Synonyms — Translate User Terms to CSV Terms
 
-| Technique | Speedup | When to use |
-|---|---|---|
-| **Vectorized operations** (no loops) | 10–100× | All queries — use `.values`, `.isin()`, groupby, not `.apply()` |
-| **Categorical dtypes** | 5–10× | For columns with many repeated values (seasons, regions, categories) |
-| **Chunked reading** | ∞ (memory) | Files >500 MB — use `chunksize=10000` or `dask` |
-| **Pre-filtering** | 2–5× | Filter early before expensive operations (groupby, merge) |
-| **Setting index** | 2–3× | For repeated lookups on same column — `df.set_index('col')` |
-| **Query caching** | Variables | Store frequently accessed subsets as separate variables |
-| **Output limiting** | 1–2× | Always `.head(20)` before printing huge tables |
+Users may describe filters using natural language that doesn't exactly match the CSV values. **Always translate user terms to the actual CSV keywords listed below before filtering.**
 
 ---
 
-## Error Handling
+### Medical Images Included
+Possible CSV values: `Yes`, `No`
 
-| Problem | Action | Performance note |
-|---|---|---|
-| **FileNotFoundError: `/home/claude/data.csv`** | **Step 1 was skipped or incomplete.** Go back: (1) Use `web_fetch` to download CSV, (2) Use `create_file` to write to disk, (3) Verify with `ls`. | Critical — cannot proceed without file |
-| `web_fetch` fails | Report that the file could not be fetched | Fail-fast; don't retry indefinitely |
-| Column not found | Print available columns; ask for clarification | Keep schema dict handy; don't re-scan |
-| CSV is very large (>500 MB) | Use chunked reading: `pd.read_csv(..., chunksize=10000)` | Prevents memory overflow |
-| Encoding errors | Try `encoding='latin-1'` or `encoding='iso-8859-1'` | Fallback quickly; don't try multiple times |
-| pandas not installed | Install immediately: `pip install pandas` | Required; install once per session |
-| Slow groupby on large data | Convert column to `category` dtype first; use `observed=True` in groupby | Reduces memory and compute |
-| Out of memory | Switch to chunked reading or `dask` for massive files | Don't load all data at once |
+| User says | Search for |
+|---|---|
+| has images, includes scans, image data available | `Yes` |
+| no images, shapes only, no scans | `No` |
 
 ---
 
-## Example Interactions — Optimized
+### Imaging Modality
+Possible CSV values: `CT`, `CBCT`, `MRI`, `X-ray`, `Ultrasound`, `PET`, `SPECT`, `Other`
 
-**User:** What datasets are available?
-
-**Claude should:**
-1. **Step 1:** Fetch CSV using `web_fetch`, write to `/home/claude/data.csv` using `create_file`, verify with file listing.
-2. **Step 2:** Load CSV with dtype optimization
-3. **Step 3:** Build schema index
-4. **Step 4:** Show a summary (limit output, use `value_counts()` for aggregates):
-   ```python
-   print(f"Total datasets: {len(df)}")
-   print(df['category'].value_counts().head(10))
-   ```
-
----
-
-**User:** Find all datasets related to healthcare.
-
-**Claude should:**
-- (CSV already loaded from previous query — skip Step 1)
-- Use the cached DataFrame (no reload)
-- Use vectorized string search with boolean indexing:
-  ```python
-  result = df[df['description'].str.contains('health|medical', case=False, na=False)]
-  print(f"Found {len(result)} datasets")
-  print(result[['name', 'category']].head(20).to_string())
-  ```
+| User says | Search for |
+|---|---|
+| CT, computed tomography, cat scan | `CT` |
+| CBCT, cone beam CT, cone beam computed tomography | `CBCT` |
+| MRI, magnetic resonance, MR imaging | `MRI` |
+| X-ray, radiograph, plain film, plain radiograph | `X-ray` |
+| ultrasound, US, echo, sonography | `Ultrasound` |
+| PET, positron emission | `PET` |
+| SPECT, bone scan, nuclear imaging, scintigraphy | `SPECT` |
 
 ---
 
-**User:** What's the distribution of datasets by year?
+### Image Source
+Possible CSV values: `Original`, `Adopted`
 
-**Claude should:**
-- Reuse cached DataFrame (already in memory)
-- Convert year column to numeric if needed
-- Use `.value_counts()` (vectorized):
-  ```python
-  dist = df['year'].value_counts().sort_index(ascending=False)
-  print(dist.head(20))
-  ```
+| User says | Search for |
+|---|---|
+| original, collected, acquired, new data | `Original` |
+| adopted, derived, sourced from other datasets, repurposed | `Adopted` |
 
 ---
 
-**User (follow-up):** Show top 5 datasets by citation count.
+### Primary Imaged Regions / Secondary Imaged Regions
+Possible CSV values: `Whole Body`, `Neurocranium`, `Viscerocranium`, `Cervical Spine`, `Thoracic Spine`, `Lumbar Spine`, `Thoracic Cage`, `Abdomen`, `Pelvis`, `Shoulder`, `Upper Arm`, `Forearm`, `Wrist`, `Hand`, `Hip`, `Upper Leg`, `Knee`, `Lower Leg`, `Ankle`, `Foot`
 
-**Claude should:**
-- Reuse the same DataFrame (already loaded)
-- Use `.nlargest()` (optimized for this operation):
-  ```python
-  top = df.nlargest(5, 'citations')[['name', 'citations']]
-  print(top.to_string())
-  ```
+| User says | Search for |
+|---|---|
+| whole body, full body, total body | `Whole Body` |
+| skull, cranium, brain case, neurocranium | `Neurocranium` |
+| face, facial, jaw, viscerocranium | `Viscerocranium` |
+| head, cranial | `Neurocranium\|Viscerocranium` |
+| neck, cervical, cervical spine | `Cervical Spine` |
+| thoracic spine, mid back, upper back, thoracic vertebrae | `Thoracic Spine` |
+| lumbar spine, lower back, lumbar | `Lumbar Spine` |
+| spine, spinal, vertebra, vertebrae, back | `Cervical Spine\|Thoracic Spine\|Lumbar Spine` |
+| ribcage, rib cage, thorax, chest, sternum, thoracic cage | `Thoracic Cage` |
+| abdomen, abdominal | `Abdomen` |
+| pelvis, pelvic, hip bone | `Pelvis` |
+| shoulder, glenohumeral | `Shoulder` |
+| upper arm, humerus region | `Upper Arm` |
+| forearm, radius ulna region | `Forearm` |
+| arm, upper extremity, upper limb | `Upper Arm\|Forearm` |
+| wrist | `Wrist` |
+| hand, fingers | `Hand` |
+| hip joint, hip replacement, THR, THA, arthroplasty | `Hip` |
+| thigh, upper leg, femur region | `Upper Leg` |
+| knee, knee replacement, TKR, TKA | `Knee` |
+| lower leg, shin, tibia fibula region | `Lower Leg` |
+| leg, lower extremity, lower limb | `Upper Leg\|Lower Leg` |
+| ankle | `Ankle` |
+| foot, feet, toes | `Foot` |
 
-## Best Practices for Speed & Efficiency
+---
 
-- **Always use vectorized operations** — No `apply()`, `iterrows()`, or loops on large data. Use pandas built-in methods instead.
-- **Never ask the user for a URL** — The source is always the hardcoded URL above.
-- **Optimize dtypes immediately** — After loading, convert low-cardinality `object` columns to `category` (5–10× faster).
-- **Pre-convert dates & numerics once** — `pd.to_datetime()` and `.astype()` should happen immediately after load, then reused.
-- **Cache filtered subsets for multi-question sessions** — If the user asks multiple questions about the same subset (e.g., "all 2021 data"), store it: `df_2021 = df[df['year'] == 2021]`.
-- **Limit output always** — Always use `.head(20)` or `.iloc[:20]` before printing; show summary statistics instead of massive tables.
-- **Prefer `.nlargest()/.nsmallest()` over sorting** — 2–3× faster than `sort_values()` + slicing for top-N queries.
-- **Use `.isin()` for membership checks** — Vectorized; much faster than `== 'A' | == 'B' | == 'C'`.
-- **Be explicit about assumptions** — State case-insensitivity, null handling, and data types where relevant.
-- **Fail fast** — If columns are missing or data is malformed, report the error immediately with available column names.
-- **Save large outputs to files** — Use `.to_csv()` for results with >100 rows; don't print to terminal.
+### Available 3D Bone Shapes
+Possible CSV values: `Cranial Bones`, `Facial Bones`, `Cervical Vertebrae`, `Thoracic Vertebrae`, `Lumbar Vertebrae`, `Sacrum`, `Coccyx`, `Ribs`, `Sternum`, `Clavicle`, `Scapula`, `Humerus`, `Radius`, `Ulna`, `Carpals`, `Metacarpals`, `Phalanges Hand`, `Hip Bones`, `Proximal Femur`, `Femur`, `Distal Femur`, `Patella`, `Proximal Tibia`, `Tibia`, `Distal Tibia`, `Proximal Fibula`, `Fibula`, `Distal Fibula`, `Tarsals`, `Metatarsals`, `Phalanges Foot`
+
+| User says | Search for |
+|---|---|
+| skull, cranium, skull bones | `Cranial Bones` |
+| face, facial bones, jaw | `Facial Bones` |
+| neck vertebrae, C1-C7 | `Cervical Vertebrae` |
+| thoracic vertebrae, T1-T12 | `Thoracic Vertebrae` |
+| lumbar vertebrae, L1-L5 | `Lumbar Vertebrae` |
+| vertebrae, spine, vertebral bodies | `Cervical Vertebrae\|Thoracic Vertebrae\|Lumbar Vertebrae` |
+| sacrum | `Sacrum` |
+| coccyx, tailbone | `Coccyx` |
+| ribs, rib bones | `Ribs` |
+| sternum, breastbone | `Sternum` |
+| clavicle, collarbone | `Clavicle` |
+| scapula, shoulder blade | `Scapula` |
+| humerus, upper arm bone | `Humerus` |
+| radius | `Radius` |
+| ulna | `Ulna` |
+| carpals, carpal bones, wrist bones | `Carpals` |
+| metacarpals, hand bones | `Metacarpals` |
+| phalanges, finger bones, hand phalanges | `Phalanges Hand` |
+| hip bones, ilium, ischium, pubis, acetabulum | `Hip Bones` |
+| proximal femur, femoral head, femoral neck | `Proximal Femur` |
+| femur, thigh bone | `Femur` |
+| distal femur, femoral condyles | `Distal Femur` |
+| patella, kneecap | `Patella` |
+| proximal tibia, tibial plateau | `Proximal Tibia` |
+| tibia, shin bone | `Tibia` |
+| distal tibia | `Distal Tibia` |
+| fibula | `Fibula` |
+| tarsals, ankle bones | `Tarsals` |
+| metatarsals, foot bones | `Metatarsals` |
+| phalanges foot, toe bones | `Phalanges Foot` |
+
+---
+
+### Voxel Segmentation Mask
+Possible CSV values: `Available`, `Supervised Segmentation`, `Automatic Segmentation`
+
+| User says | Search for |
+|---|---|
+| has segmentation, segmentation masks, segmented | `Available` |
+| manual segmentation, expert segmentation, human annotated | `Supervised Segmentation` |
+| automatic segmentation, auto segmentation, AI segmentation | `Automatic Segmentation` |
+
+---
+
+### Mesh Model
+Possible CSV values: `Available`, `Supervised 3D Reconstruction`, `Automatic 3D Reconstruction`
+
+| User says | Search for |
+|---|---|
+| has mesh, mesh models, STL, OBJ, PLY, surface model | `Available` |
+| manual reconstruction, expert reconstruction | `Supervised 3D Reconstruction` |
+| automatic reconstruction, auto mesh, AI reconstruction | `Automatic 3D Reconstruction` |
+
+---
+
+### CAD Model
+Possible CSV values: `Available`, `Supervised CAD Modeling`, `Automatic CAD Modeling`
+
+| User says | Search for |
+|---|---|
+| has CAD, CAD models, STEP, IGES | `Available` |
+| manual CAD, expert CAD | `Supervised CAD Modeling` |
+| automatic CAD, auto CAD modeling | `Automatic CAD Modeling` |
+
+---
+
+### Subjects Vital Status
+Possible CSV values: `Alive`, `Postmortem`
+
+| User says | Search for |
+|---|---|
+| alive, living, in vivo | `Alive` |
+| postmortem, deceased, cadaver, cadaveric, ex vivo, dead | `Postmortem` |
+
+---
+
+### Access Policy
+Possible CSV values: `Open Access`, `Restricted`, `Simple Registration`, `Payment Required`
+
+| User says | Search for |
+|---|---|
+| open access, free, public, freely available, no restrictions | `Open Access` |
+| restricted, controlled, requires approval, application required | `Restricted` |
+| registration, sign up, account required | `Simple Registration` |
+| paid, payment, subscription, fee | `Payment Required` |
+
+---
+
+### Data Redistribution Policy / Research Use Policy / Commercial Use Policy
+Possible CSV values: `Allowed`, `Restricted`, `Not Specified`
+
+| User says | Search for |
+|---|---|
+| allowed, permitted, yes, can redistribute, can use commercially | `Allowed` |
+| not allowed, restricted, prohibited, no, cannot redistribute | `Restricted` |
+| not specified, unknown, unclear | `Not Specified` |
+
+---
+
+**When in doubt**, use broad `.str.contains()` with synonyms joined by `|` rather than exact match. Example:
+```python
+# User says "redistribution not allowed" — map to the correct CSV value
+result = df[df['Data Redistribution Policy'].str.contains('Restricted', case=False, na=False)]
+```
+
+---
+
+## Step 2: Filter the Data
+
+### Filtering Semicolon-Separated Columns
+
+For columns with multiple values (e.g., `Primary Imaged Regions`, `Available 3D Bone Shapes`), use partial matching:
+
+```python
+# Find datasets with "Pelvis" in Primary Imaged Regions
+result = df[df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)]
+
+# Find datasets with "Femur" in Available 3D Bone Shapes  
+result = df[df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
+
+# Find datasets with "CT" imaging modality
+result = df[df['Imaging Modality'].str.contains('CT', case=False, na=False)]
+```
+
+### Filtering by Multiple Values (OR condition)
+
+```python
+# Find datasets with Pelvis OR Hip in Primary Imaged Regions
+result = df[df['Primary Imaged Regions'].str.contains('Pelvis|Hip', case=False, na=False)]
+
+# Find datasets with CT OR MRI imaging
+result = df[df['Imaging Modality'].str.contains('CT|MRI', case=False, na=False)]
+```
+
+### Filtering by Multiple Conditions (AND condition)
+
+```python
+# Find datasets with Pelvis AND from USA
+result = df[
+    (df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)) &
+    (df['Country'] == 'USA')
+]
+
+# Find CT datasets from 2023 or later with Femur
+result = df[
+    (df['Imaging Modality'].str.contains('CT', case=False, na=False)) &
+    (df['Year'] >= 2023) &
+    (df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False))
+]
+```
+
+### Filtering Exact Matches
+
+```python
+# Find datasets from specific country
+result = df[df['Country'] == 'USA']
+
+# Find datasets from specific year
+result = df[df['Year'] == 2023]
+
+# Find datasets with Open Access
+result = df[df['Access Policy'] == 'Open Access']
+```
+
+---
+
+## Step 3: Return Results
+
+Always include these **base columns** in the output, plus any columns the user specifically asked about:
+
+```python
+# Base columns always shown
+base_cols = ['Dataset Name', 'Access Link', 'Related Paper']
+
+# Add columns relevant to the user's query — examples:
+query_cols = ['Country', 'Year', 'Primary Imaged Regions', 'Imaging Modality']  # adjust per request
+
+# Combine, preserving order and avoiding duplicates
+columns_to_show = base_cols + [c for c in query_cols if c not in base_cols]
+
+print(f"Found {len(result)} datasets")
+print(result[columns_to_show].to_markdown(index=False))
+```
+
+**Always present the result as a Markdown table** using `.to_markdown(index=False)`. This renders as a clean table for the user. Install `tabulate` if needed: `pip install tabulate`.
+
+**Column selection examples:**
+
+```python
+# User asks about imaged regions → include region columns
+columns_to_show = base_cols + ['Country', 'Year', 'Imaging Modality', 'Primary Imaged Regions', 'Secondary Imaged Regions']
+
+# User asks about access/licensing → include policy columns
+columns_to_show = base_cols + ['Access Policy', 'Data Redistribution Policy', 'Commercial Use Policy', 'License']
+
+# User asks about 3D models → include 3D/model columns
+columns_to_show = base_cols + ['Available 3D Bone Shapes', 'Voxel Segmentation Mask', 'Mesh Model', 'CAD Model']
+
+# User asks about subjects → include subject columns
+columns_to_show = base_cols + ['Number of Subjects', 'Available Information per Subject', 'Subjects Vital Status', 'Subjects Clinical Condition']
+```
+
+---
+
+## CSV Columns Reference
+
+- `Dataset Name`: Name of the dataset
+- `Access Link`: URL to access the dataset
+- `Related Paper`: Associated publication
+- `Country`: Country of origin
+- `Year`: Publication/release year
+- `Size`: Dataset size
+- `Remarks`: Additional notes
+- `Medical Images Included`: Whether medical images are included
+- `Imaging Modality`: CT, MRI, X-ray, etc. (can be multiple, separated by `;`)
+- `Image Source`: Original or Adopted
+- `Images Source Details`: Additional source information
+- `Primary Imaged Regions`: **Semicolon-separated** list (e.g., `Pelvis; Hip; Upper Leg`)
+- `Secondary Imaged Regions`: **Semicolon-separated** list
+- `Available 3D Bone Shapes`: **Semicolon-separated** list (e.g., `Femur; Tibia; Fibula`)
+- `Additional Structures`: Other anatomical structures
+- `Landmarks`: Anatomical landmarks
+- `Voxel Segmentation Mask`: Availability status
+- `Mesh Model`: Availability status
+- `CAD Model`: Availability status  
+- `Number of Subjects`: Number of subjects/patients
+- `Available Information per Subject`: **Semicolon-separated** list (e.g., `Age; Gender; Height`)
+- `Subjects Vital Status`: Alive/Deceased status
+- `Subjects Clinical Condition`: Clinical conditions
+- `Access Policy`: Open Access, Registration Required, etc.
+- `Data Redistribution Policy`: Allowed/Not Allowed
+- `Research Use Policy`: Usage terms for research
+- `Commercial Use Policy`: Usage terms for commercial purposes
+- `License`: License type (e.g., CC BY 4.0)
+
+---
+
+## Common Query Patterns
+
+### By Anatomical Region
+
+```python
+# Pelvis datasets
+df[df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)]
+
+# Femur in 3D bone shapes
+df[df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
+
+# Spine (any type)
+df[df['Primary Imaged Regions'].str.contains('Spine', case=False, na=False)]
+```
+
+### By Imaging Type
+
+```python
+# CT scans only
+df[df['Imaging Modality'].str.contains('CT', case=False, na=False)]
+
+# MRI scans only
+df[df['Imaging Modality'].str.contains('MRI', case=False, na=False)]
+```
+
+### By Country and Year
+
+```python
+# USA datasets
+df[df['Country'] == 'USA']
+
+# Recent datasets (2023 or later)
+df[df['Year'] >= 2023]
+
+# USA datasets from 2023+
+df[(df['Country'] == 'USA') & (df['Year'] >= 2023)]
+```
+
+### By Access Policy
+
+```python
+# Open access only
+df[df['Access Policy'] == 'Open Access']
+
+# Datasets allowing commercial use
+df[df['Commercial Use Policy'].str.contains('Allowed', case=False, na=False)]
+```
+
+### By Available Data
+
+```python
+# Datasets with mesh models
+df[df['Mesh Model'] == 'Available']
+
+# Datasets with segmentation masks
+df[df['Voxel Segmentation Mask'] == 'Available']
+
+# Datasets with age and gender information
+df[df['Available Information per Subject'].str.contains('Age.*Gender|Gender.*Age', case=False, na=False)]
+```
+
+---
+
+## Tips
+
+1. **Always use `.str.contains()` with `na=False`** for semicolon-separated columns
+2. **Use `case=False`** for case-insensitive search
+3. **Use `|` for OR conditions** within `.str.contains()`: `'Pelvis|Hip'`
+4. **Use `&` for AND conditions** between different filters
+5. **Use `==` for exact matches** on single-value columns like Country, Year
+6. **Check column names** if unsure: `print(df.columns.tolist())`

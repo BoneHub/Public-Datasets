@@ -48,13 +48,15 @@ If you're not comfortable with manual filtering or want instant results, we've p
 
 #### How to use:
 
-1. **Download the skill file:**  
-  Download [BONEHUB_PUBLIC_DATASETS_CLAUDE_SKILL.md](ai_assisted_search/BONEHUB_PUBLIC_DATASETS_CLAUDE_SKILL.md)
+1. **Download both required files:**  
+   - Skill file: [BONEHUB_PUBLIC_DATASETS_CLAUDE_SKILL.md](ai_assisted_search/BONEHUB_PUBLIC_DATASETS_CLAUDE_SKILL.md)
+   - CSV data: [bonehub_public_datasets.csv](data/bonehub_public_datasets.csv)
 
-2. **Upload to Claude.ai:**  
+2. **Upload both files to Claude.ai:**  
    - Go to [claude.ai](https://claude.ai)
    - Start a new chat
-   - Click the attachment button (📎) and upload the downloaded `.md` skill file
+   - Click the attachment button (📎)
+   - Upload **both** the `.md` skill file AND the `.csv` data file
 
 3. **Ask your question:**  
    Simply describe what you're looking for in natural language. Claude will filter the datasets and return matching results.
