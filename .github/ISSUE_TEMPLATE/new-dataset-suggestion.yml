@@ -28,7 +28,7 @@ body:
     id: dataset_name
     attributes:
       label: Dataset name
-      description: The name of the dataset.
+      description: "The name of the dataset."
       placeholder: "e.g., 'Lung CT Scans Dataset'"
     validations:
       required: true
@@ -37,7 +37,7 @@ body:
     id: access_link
     attributes:
       label: Access link
-      description: URL(s) where the dataset can be accessed.
+      description: "URL(s) where the dataset can be accessed."
       placeholder: "https://dataset.com; https://another-link.com"
     validations:
       required: true
@@ -46,7 +46,7 @@ body:
     id: related_paper
     attributes:
       label: Related Paper
-      description: Link to the paper(s) describing the dataset, if available.
+      description: "Link to the paper(s) describing the dataset, if available."
       placeholder: "https://doi.org/xxxx"
     validations:
       required: false
@@ -55,7 +55,7 @@ body:
     id: country
     attributes:
       label: Country
-      description: Country or countries that own or host the dataset.
+      description: "Country or countries that own or host the dataset."
       placeholder: "e.g., Netherlands; USA"
     validations:
       required: false
@@ -64,8 +64,8 @@ body:
     id: year
     attributes:
       label: Year
-      description: Year when the dataset was published or made available.
-      placeholder: e.g., 2025
+      description: "Year when the dataset was published or made available."
+      placeholder: "e.g., 2025"
     validations:
       required: false
 
@@ -73,8 +73,8 @@ body:
     id: size
     attributes:
       label: Size
-      description: Approximate size of the dataset in GB.
-      placeholder: e.g., 50
+      description: "Approximate size of the dataset in GB."
+      placeholder: "e.g., 50"
     validations:
       required: false
 
@@ -144,7 +144,7 @@ body:
     id: imaging_modality
     attributes:
       label: Imaging Modality
-      description: Select the imaging modalities that the dataset is based on. Choose all that apply.
+      description: "Select the imaging modalities that the dataset is based on. Choose all that apply."
       multiple: true
       options:
         - CT
@@ -184,7 +184,7 @@ body:
     id: images_source_details
     attributes:
       label: Images Source Details
-      description: If adopted images are used, please provide links to the original dataset(s).
+      description: "If adopted images are used, please provide links to the original dataset(s)."
       placeholder: "https://dataset.com; https://another-link.com"
     validations:
       required: false
@@ -285,7 +285,7 @@ body:
     id: available_3d_bone_shapes
     attributes:
       label: Available 3D Bone Shapes
-      description: Select the available 3D bone shapes in the dataset. Choose all that apply.
+      description: "Select the available 3D bone shapes in the dataset. Choose all that apply."
       multiple: true
       options:
         - Cranial Bones
@@ -335,7 +335,7 @@ body:
     id: landmarks
     attributes:
       label: Landmarks
-      description: List of anatomical landmarks available in the dataset, if any.
+      description: "List of anatomical landmarks available in the dataset, if any."
       placeholder: "e.g., Pelvic Landmarks; Spinal Landmarks"
     validations:
       required: false
@@ -446,8 +446,8 @@ body:
     id: number_of_subjects
     attributes:
       label: Number of Subjects
-      description: Total number of subjects in the dataset. Please note that number of subjects may differ from number of images or 3D shapes.
-      placeholder: e.g., 100
+      description: "Total number of subjects in the dataset. Please note that number of subjects may differ from number of images or 3D shapes."
+      placeholder: "e.g., 100"
     validations:
       required: false
 
@@ -455,7 +455,7 @@ body:
     id: available_information_per_subject
     attributes:
       label: Available Information per Subject
-      description: List the types of information available for each subject. For example, subject information offered in DICOM tags or in a separate CSV/Excel file.
+      description: "List the types of information available for each subject. For example, subject information offered in DICOM tags or in a separate CSV/Excel file."
       placeholder: "e.g., age; gender; height; weight; ethnicity; medical history"
     validations:
       required: false
@@ -464,7 +464,7 @@ body:
     id: subjects_vital_status
     attributes:
       label: Subjects Vital Status
-      description: Indicate the vital status of the subjects in the dataset. Choose all that apply.
+      description: "Indicate the vital status of the subjects in the dataset. Choose all that apply."
       multiple: true
       options:
         - Alive
@@ -476,7 +476,7 @@ body:
     id: subjects_clinical_condition
     attributes:
       label: Subjects Clinical Condition
-      description: Indicate the clinical condition of the subjects in the dataset.
+      description: "Indicate the clinical condition of the subjects in the dataset."
       placeholder: "e.g., healthy; osteoarthritis; fracture; implant; post-operative; ligament tear"
     validations:
       required: false
@@ -490,8 +490,7 @@ body:
   # ---- Data Usage Policy ----
   - type: markdown
     attributes:
-      value: |
-        # 📜 Data Usage Policy
+      value: "# 📜 Data Usage Policy"
   
   - type: dropdown
     id: access_policy
@@ -523,7 +522,7 @@ body:
     id: data_redistribution_policy
     attributes:
       label: Data Redistribution Policy
-      description: Please select the data redistribution policy—that is, whether derivatives of this dataset may be redistributed. Select all that apply.
+      description: "Please select the data redistribution policy—that is, whether derivatives of this dataset may be redistributed. Select all that apply."
       multiple: true
       options:
         - Allowed
@@ -536,7 +535,7 @@ body:
     id: research_use_policy
     attributes:
       label: Research Use Policy
-      description: Please select the research use policy for this dataset—that is, whether the dataset can be used for research purposes. Choose all that apply.
+      description: "Please select the research use policy for this dataset—that is, whether the dataset can be used for research purposes. Choose all that apply."
       multiple: true
       options:
         - Allowed
@@ -549,7 +548,7 @@ body:
     id: commercial_use_policy
     attributes:
       label: Commercial Use Policy
-      description: Please select the commercial use policy for this dataset—that is, whether the dataset can be used for commercial purposes. Choose all that apply.
+      description: "Please select the commercial use policy for this dataset—that is, whether the dataset can be used for commercial purposes. Choose all that apply."
       multiple: true
       options:
         - Allowed
@@ -562,7 +561,7 @@ body:
     id: license
     attributes:
       label: License
-      description: Specify the license under which the dataset is released. Choose all that apply.
+      description: "Specify the license under which the dataset is released. Choose all that apply."
       placeholder: "e.g., CC BY 4.0; CC BY-NC-ND 4.0; MIT; Custom License"
     validations:
       required: false
