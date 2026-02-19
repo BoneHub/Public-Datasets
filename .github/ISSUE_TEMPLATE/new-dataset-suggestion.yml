@@ -61,18 +61,18 @@ body:
       required: false
   
   - type: input
-    id: released_date
+    id: year
     attributes:
-      label: Released Date
-      description: "Date when the dataset was published or made available."
+      label: Year
+      description: "Year when the dataset was published or made available."
       placeholder: "e.g., 2025"
     validations:
       required: false
 
   - type: input
-    id: dataset_size
+    id: size
     attributes:
-      label: Dataset Size
+      label: Size
       description: "Approximate size of the dataset in GB."
       placeholder: "e.g., 50"
     validations:
@@ -190,10 +190,59 @@ body:
       required: false
 
   - type: dropdown
-    id: imaged_regions
+    id: primary_imaged_regions
     attributes:
-      label: Imaged Regions
-      description: "Select the radiological regions covered in the dataset. Choose all that apply. If the dataset does not include medical images, you should skip this field."
+      label: Primary Imaged Regions
+      description: |
+        Select the primary imaged regions covered in the dataset. Choose all that apply.
+        If the dataset does not include medical images, you should skip this field.
+        
+        <details>
+        <summary>💡 Click to see more explanations:</summary>
+        Primary imaged regions are main areas of focus, predominantly visible and fully captured in every image within the dataset.
+        For example, if the dataset consists of CT scans that primarily capture the lumbar spine, then "Lumbar Spine" would be selected as a primary imaged region.
+        If the dataset includes whole-body scans where all body parts are fully captured in all images, then "Whole Body" would be selected.
+        </details>
+
+      multiple: true
+      options:
+        - whole Body
+        - Neurocranium
+        - Viscerocranium
+        - Cervical Spine
+        - Thoracic Spine
+        - Lumbar Spine
+        - Thoratic Cage
+        - Abdomen
+        - Pelvis
+        - Shoulder
+        - Upper Arm
+        - Forearm
+        - Wrist
+        - Hand
+        - Hip
+        - Upper Leg
+        - Knee
+        - Lower Leg
+        - Ankle
+        - Foot
+    validations:
+      required: false
+
+  - type: dropdown
+    id: secondary_imaged_regions
+    attributes:
+      label: Secondary Imaged Regions
+      description: |
+        Select the secondary imaged regions covered in the dataset. Choose all that apply.
+        If the dataset does not include medical images, you should skip this field.
+        
+        <details>
+        <summary>💡 Click to see more explanations:</summary>
+        Secondary imaged regions are additional areas that are partially or fully captured in some images, appearing alongside the primary regions but not being the main intended target. 
+        For example, a dataset may primarily focus on the lumbar spine (primary region) but also include parts of the pelvis and thoracic spine in some images (secondary regions).
+        </details>
+
       multiple: true
       options:
         - whole Body
@@ -233,10 +282,10 @@ body:
         > 📌 *Note: This section focuses on **3D bone shapes** (e.g., segmented bones from CT or MRI scans). If the dataset does not contain 3D bone shapes, you can skip this section.*
   
   - type: dropdown
-    id: available_structures
+    id: available_3d_bone_shapes
     attributes:
-      label: Available Structures
-      description: "Select the structures available in the dataset. Choose all that apply."
+      label: Available 3D Bone Shapes
+      description: "Select the available 3D bone shapes in the dataset. Choose all that apply."
       multiple: true
       options:
         - Cranial Bones
@@ -404,7 +453,7 @@ body:
   - type: input
     id: available_information_per_subject
     attributes:
-      label: Available Information per Subject.
+      label: Available Information per Subject
       description: "List the types of information available for each subject. For example, subject information offered in DICOM tags or in a separate CSV/Excel file."
       placeholder: "e.g., age; gender; height; weight; ethnicity; medical history"
     validations:
@@ -454,8 +503,8 @@ body:
         <summary>💡 Click to see explanations of each access type:</summary>
 
         - **Open Access**: Free to access without any restrictions.
+        - **Restricted**: Requires approval from dataset owner, often requiring a research proposal.
         - **Simple Registration**: Requires simple account creation without any further requirements.
-        - **Authorization Required**: Requires approval from dataset owner, often requiring a research proposal.
         - **Payment Required**: Requires payment or subscription to access the dataset.
 
         </details>
@@ -463,8 +512,8 @@ body:
       multiple: true
       options:
         - Open Access
+        - Restricted
         - Simple Registration
-        - Authorization Required
         - Payment Required
     validations:
       required: false
@@ -478,6 +527,7 @@ body:
       options:
         - Allowed
         - Restricted
+        - Not Specified
     validations:
       required: false
   
@@ -490,6 +540,7 @@ body:
       options:
         - Allowed
         - Restricted
+        - Not Specified
     validations:
       required: false
 
@@ -502,6 +553,7 @@ body:
       options:
         - Allowed
         - Restricted
+        - Not Specified
     validations:
       required: false
   
