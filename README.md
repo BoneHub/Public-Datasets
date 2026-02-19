@@ -83,7 +83,7 @@ If you prefer to filter datasets yourself, you have two main approaches:
 
 #### **A) Using Microsoft Excel**
 
-1. Download the [datasets.csv](data/bonehub_public_datasets.csv) file
+1. Download the [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv) file
 2. Open it with Microsoft Excel
 3. Select the header row (row 1)
 4. Go to **Data** → **Filter** (or press Ctrl+Shift+L)
