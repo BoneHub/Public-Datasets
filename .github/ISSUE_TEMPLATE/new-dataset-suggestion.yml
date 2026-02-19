@@ -134,9 +134,10 @@ body:
     attributes:
       label: Medical Images Included
       description: Does this dataset provides medical images (e.g., CT, MRI)?
+      multiple: false
       options:
-        - Yes
-        - No
+        - "Yes"
+        - "No"
     validations:
       required: false
 
