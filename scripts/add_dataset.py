@@ -35,8 +35,9 @@ def parse_issue_form(body: str) -> dict:
         # Remove empty markdown artifacts
         value = re.sub(r"^\s*$", "", value)
 
-        if value:
-            fields[key] = value
+        if value == "_No response_":
+            value = ""
+        fields[key] = value
 
     return fields
 
