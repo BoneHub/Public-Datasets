@@ -473,7 +473,7 @@ body:
     id: data_redistribution_policy
     attributes:
       label: Data Redistribution Policy
-      description: "Please select the data redistribution policy (i.e., how the data or derivatives can be redistributed) for this dataset. Choose all that apply."
+      description: "Please select the data redistribution policy—that is, whether derivatives of this dataset may be redistributed. Select all that apply."
       multiple: true
       options:
         - Allowed
@@ -485,7 +485,7 @@ body:
     id: research_use_policy
     attributes:
       label: Research Use Policy
-      description: "Please select the research use policy for this dataset. Choose all that apply."
+      description: "Please select the research use policy for this dataset—that is, whether the dataset can be used for research purposes. Choose all that apply."
       multiple: true
       options:
         - Allowed
@@ -497,7 +497,7 @@ body:
     id: commercial_use_policy
     attributes:
       label: Commercial Use Policy
-      description: "Please select the commercial use policy for this dataset. Choose all that apply."
+      description: "Please select the commercial use policy for this dataset—that is, whether the dataset can be used for commercial purposes. Choose all that apply."
       multiple: true
       options:
         - Allowed
