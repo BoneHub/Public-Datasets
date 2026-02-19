@@ -61,17 +61,17 @@ If you're not comfortable with manual filtering or want instant results, we've p
 
 #### Example prompts:
 
-- *"Find me datasets with CT modality, covering pelvis images, including sacrum 3D shapes, and allowing commercial use."*
+- *"Find datasets with CT in Imaging Modality, Pelvis in Primary Imaged Regions, Sacrum in Available 3D Bone Shapes, and Data Redistribution Policy = Allowed."*
 
-- *"Show me all open-access datasets that have MRI scans of the spine with more than 100 subjects."*
+- *"Show me Open Access datasets with MRI in Imaging Modality and Number of Subjects > 100."*
 
-- *"Which datasets contain femur 3D shapes in surface mesh format and are licensed under CC BY 4.0?"*
+- *"Which datasets list Femur in Available 3D Bone Shapes, have Mesh Model = Available, and License includes CC BY 4.0?"*
 
-- *"List datasets from 2024 or later that include knee imaging and provide subject metadata like age and gender."*
+- *"List datasets from 2024 or later that include Knee in Primary Imaged Regions and list Age and Gender in Available Information per Subject."*
 
-- *"Find datasets with whole body CT scans that allow redistribution."*
+- *"Find datasets with Whole Body in Primary Imaged Regions and Research Use Policy = Allowed."*
 
-- *"What datasets have cervical vertebrae shapes in voxel mask format?"*
+- *"What datasets list Cervical Spine in Primary Imaged Regions and have Mesh Model = Available?"*
 
 The AI assistant will search through the entire dataset collection and provide you with a filtered list matching your criteria.
 
@@ -130,10 +130,10 @@ import pandas as pd
 df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Find all datasets with CT modality
-ct_datasets = df[df['Modality'].str.contains('CT', case=False, na=False)]
+ct_datasets = df[df['Imaging Modality'].str.contains('CT', case=False, na=False)]
 
 print(f"Found {len(ct_datasets)} CT datasets")
-print(ct_datasets[['Dataset', 'Year', 'Modality', '3D Bone Shapes', 'License']])
+print(ct_datasets[['Dataset Name', 'Year', 'Imaging Modality', 'Available 3D Bone Shapes', 'License']])
 ```
 
 ##### **Example 2: Filter by License (Commercial Use Allowed)**
@@ -143,14 +143,14 @@ import pandas as pd
 
 df = pd.read_csv('data/bonehub_public_datasets.csv')
 
-# Find datasets with licenses allowing commercial use (CC BY 4.0 or similar)
-commercial_friendly = df[df['License'].str.contains('CC BY 4.0', case=False, na=False)]
+# Find datasets with explicit commercial-use permission
+commercial_friendly = df[df['Commercial Use Policy'].str.contains('Allowed', case=False, na=False)]
 
-# Or exclude non-commercial licenses
-non_nc_licenses = df[~df['License'].str.contains('NC', case=False, na=False)]
+# Or filter by license text (e.g., CC BY 4.0)
+cc_by = df[df['License'].str.contains('CC BY 4.0', case=False, na=False)]
 
-print(f"Found {len(commercial_friendly)} datasets with CC BY 4.0")
-print(commercial_friendly[['Dataset', 'Modality', '3D Bone Shapes', 'License']])
+print(f"Found {len(commercial_friendly)} datasets with commercial use allowed")
+print(commercial_friendly[['Dataset Name', 'Imaging Modality', 'Available 3D Bone Shapes', 'Commercial Use Policy', 'License']])
 ```
 
 ##### **Example 3: Multiple Criteria - CT, Pelvis, Sacrum, Open Access**
@@ -162,14 +162,14 @@ df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Apply multiple filters
 filtered = df[
-    (df['Modality'].str.contains('CT', case=False, na=False)) &
+    (df['Imaging Modality'].str.contains('CT', case=False, na=False)) &
     (df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)) &
-    (df['3D Bone Shapes'].str.contains('Sacrum', case=False, na=False)) &
-    (df['Accessibility'] == 'Open')
+    (df['Available 3D Bone Shapes'].str.contains('Sacrum', case=False, na=False)) &
+    (df['Access Policy'].str.contains('Open', case=False, na=False))
 ]
 
 print(f"Found {len(filtered)} matching datasets:")
-print(filtered[['Dataset', 'Year', 'N subjects', '3D Format', 'License']])
+  print(filtered[['Dataset Name', 'Year', 'Number of Subjects', 'Mesh Model', 'License']])
 ```
 
 ##### **Example 4: Filter by Number of Subjects**
@@ -179,14 +179,14 @@ import pandas as pd
 
 df = pd.read_csv('data/bonehub_public_datasets.csv')
 
-# Convert 'N subjects' to numeric (handling 'N/A' values)
-df['N subjects'] = pd.to_numeric(df['N subjects'], errors='coerce')
+# Convert 'Number of Subjects' to numeric (handling 'N/A' values)
+df['Number of Subjects'] = pd.to_numeric(df['Number of Subjects'], errors='coerce')
 
 # Find datasets with more than 100 subjects
-large_datasets = df[df['N subjects'] > 100]
+large_datasets = df[df['Number of Subjects'] > 100]
 
 print(f"Found {len(large_datasets)} datasets with >100 subjects")
-print(large_datasets[['Dataset', 'N subjects', 'Modality', '3D Bone Shapes']].sort_values('N subjects', ascending=False))
+print(large_datasets[['Dataset Name', 'Number of Subjects', 'Imaging Modality', 'Available 3D Bone Shapes']].sort_values('Number of Subjects', ascending=False))
 ```
 
 ##### **Example 5: Filter by 3D Format**
@@ -196,11 +196,11 @@ import pandas as pd
 
 df = pd.read_csv('data/bonehub_public_datasets.csv')
 
-# Find datasets with surface mesh format
-surface_mesh = df[df['3D Format'].str.contains('Surface Mesh', case=False, na=False)]
+# Find datasets that include mesh models
+surface_mesh = df[df['Mesh Model'].str.contains('Available', case=False, na=False)]
 
-print(f"Found {len(surface_mesh)} datasets with surface mesh format")
-print(surface_mesh[['Dataset', 'Modality', '3D Bone Shapes', '3D Format']])
+print(f"Found {len(surface_mesh)} datasets with mesh models")
+print(surface_mesh[['Dataset Name', 'Imaging Modality', 'Available 3D Bone Shapes', 'Mesh Model']])
 ```
 
 ##### **Example 6: Search for Specific Anatomical Regions**
@@ -211,10 +211,10 @@ import pandas as pd
 df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Find datasets containing femur shapes
-femur_datasets = df[df['3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
+femur_datasets = df[df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
 
 print(f"Found {len(femur_datasets)} datasets with femur shapes")
-print(femur_datasets[['Dataset', 'Year', 'N subjects', '3D Format', 'Accessibility']])
+print(femur_datasets[['Dataset Name', 'Year', 'Number of Subjects', 'Mesh Model', 'Access Policy']])
 ```
 
 ##### **Example 7: Save Filtered Results**
@@ -226,8 +226,8 @@ df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Apply your filters
 filtered = df[
-    (df['Modality'].str.contains('MRI', case=False, na=False)) &
-    (df['Accessibility'] == 'Open')
+    (df['Imaging Modality'].str.contains('MRI', case=False, na=False)) &
+    (df['Access Policy'].str.contains('Open', case=False, na=False))
 ]
 
 # Save to a new CSV file
