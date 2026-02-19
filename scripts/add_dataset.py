@@ -77,7 +77,7 @@ if __name__ == "__main__":
     row = parse_issue_form(issue_body)
     yaml_path = Path(".github/ISSUE_TEMPLATE/new-dataset-suggestion.yml")
     row = normalize_values(row, yaml_path)
-    csv_path = Path("data/datasets.csv")
+    csv_path = Path("data/bonehub_public_datasets.csv")
 
     # Ensure data folder exists
     csv_path.parent.mkdir(parents=True, exist_ok=True)

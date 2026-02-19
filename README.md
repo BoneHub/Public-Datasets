@@ -1,6 +1,6 @@
 ## ✅ Public Datasets
 
-> **[→ Browse the Complete Dataset Collection](data/datasets.csv)**
+> **[→ Browse the Complete Dataset Collection](data/bonehub_public_datasets.csv)**
 
 # Welcome to the BoneHub's Public Datasets
 
@@ -38,7 +38,7 @@ If you have found this resource useful for your research, presentations, or publ
 
 ## 🔍 Usage Instructions
 
-The complete dataset collection is available in [data/datasets.csv](data/datasets.csv). You can filter and search through the datasets using one of the following methods:
+The complete dataset collection is available in [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv). You can filter and search through the datasets using one of the following methods:
 
 ---
 
@@ -83,7 +83,7 @@ If you prefer to filter datasets yourself, you have two main approaches:
 
 #### **A) Using Microsoft Excel**
 
-1. Download the [datasets.csv](data/datasets.csv) file
+1. Download the [datasets.csv](data/bonehub_public_datasets.csv) file
 2. Open it with Microsoft Excel
 3. Select the header row (row 1)
 4. Go to **Data** → **Filter** (or press Ctrl+Shift+L)
@@ -110,7 +110,7 @@ pip install pandas
 import pandas as pd
 
 # Load the CSV file
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Display first few rows
 print(df.head())
@@ -127,7 +127,7 @@ print(df.info())
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Find all datasets with CT modality
 ct_datasets = df[df['Modality'].str.contains('CT', case=False, na=False)]
@@ -141,7 +141,7 @@ print(ct_datasets[['Dataset', 'Year', 'Modality', '3D Bone Shapes', 'License']])
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Find datasets with licenses allowing commercial use (CC BY 4.0 or similar)
 commercial_friendly = df[df['License'].str.contains('CC BY 4.0', case=False, na=False)]
@@ -158,7 +158,7 @@ print(commercial_friendly[['Dataset', 'Modality', '3D Bone Shapes', 'License']])
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Apply multiple filters
 filtered = df[
@@ -177,7 +177,7 @@ print(filtered[['Dataset', 'Year', 'N subjects', '3D Format', 'License']])
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Convert 'N subjects' to numeric (handling 'N/A' values)
 df['N subjects'] = pd.to_numeric(df['N subjects'], errors='coerce')
@@ -194,7 +194,7 @@ print(large_datasets[['Dataset', 'N subjects', 'Modality', '3D Bone Shapes']].so
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Find datasets with surface mesh format
 surface_mesh = df[df['3D Format'].str.contains('Surface Mesh', case=False, na=False)]
@@ -208,7 +208,7 @@ print(surface_mesh[['Dataset', 'Modality', '3D Bone Shapes', '3D Format']])
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Find datasets containing femur shapes
 femur_datasets = df[df['3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
@@ -222,7 +222,7 @@ print(femur_datasets[['Dataset', 'Year', 'N subjects', '3D Format', 'Accessibili
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/datasets.csv')
+df = pd.read_csv('data/bonehub_public_datasets.csv')
 
 # Apply your filters
 filtered = df[
@@ -244,7 +244,7 @@ We welcome contributions from the community to expand the list of datasets. You 
 
 - Report incorrect information by submitting an [issue](https://github.com/BoneHub/Public-Datasets/issues/new).
 
-- You can also make direct changes to [datasets.csv](data/datasets.csv) by a pull request!
+- You can also make direct changes to [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv) by a pull request!
 
 ## 📜 License
 

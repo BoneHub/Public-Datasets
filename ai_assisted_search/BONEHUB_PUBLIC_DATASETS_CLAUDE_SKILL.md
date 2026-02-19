@@ -20,7 +20,7 @@ computing aggregates, and more.
 The CSV is always fetched from this hardcoded raw URL (do NOT ask the user for a URL):
 
 ```
-https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/datasets.csv
+https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.csv
 ```
 
 ---
@@ -33,7 +33,7 @@ https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/datasets.csv
 
 Instead, use the `web_fetch` tool (available natively to Claude) to fetch the raw CSV content:
 
-- URL to fetch: `https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/datasets.csv`
+- URL to fetch: `https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.csv`
 
 Once `web_fetch` returns the CSV text, write it to disk using `file_create` or `bash_tool`:
 
