@@ -27,30 +27,36 @@ https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_publ
 
 ## Step-by-Step Procedure
 
-### 1. Download the CSV
+⚠️ **IMPORTANT:** Follow steps in order. Step 1 (Download CSV) must complete before proceeding to Step 2. Skipping Step 1 will cause `FileNotFoundError`.
+
+### 1. Download & Cache the CSV (Required First Step)
+
+⚠️ **CRITICAL:** This step MUST be completed first or all subsequent operations will fail with `FileNotFoundError`.
 
 **Do NOT use `curl` or any bash network command** — the bash environment has no network access.
 
-Instead, use the `web_fetch` tool (available natively to Claude) to fetch the raw CSV content:
+Instead:
 
-- URL to fetch: `https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.csv`
+1. **Fetch the CSV** using the `web_fetch` tool with this URL:
+   ```
+   https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.csv
+   ```
 
-Once `web_fetch` returns the CSV text, write it to disk using `file_create` or `bash_tool`:
+2. **Write to disk immediately** using `create_file` tool:
+   ```
+   Path: /home/claude/data.csv
+   Content: <paste the entire CSV text from web_fetch output>
+   ```
 
-```bash
-cat > /home/claude/data.csv << 'CSVEOF'
-<paste the fetched CSV content here>
-CSVEOF
-```
+3. **Verify the file exists:**
+   ```bash
+   ls -la /home/claude/data.csv
+   wc -l /home/claude/data.csv
+   ```
 
-Then verify it looks correct:
+4. **Only after verification**, proceed to Step 2.
 
-```bash
-head -5 /home/claude/data.csv
-wc -l /home/claude/data.csv
-```
-
-If `web_fetch` fails, inform the user the file could not be fetched and that the repository may not be publicly accessible.
+**Error Recovery:** If you see `FileNotFoundError: /home/claude/data.csv`, it means this step was skipped or the file write failed. Go back and repeat steps 1-3.
 
 ### 2. Optimize Data Loading
 
@@ -237,6 +243,7 @@ result = df_2021['region'].value_counts()  # No filtering needed
 
 | Problem | Action | Performance note |
 |---|---|---|
+| **FileNotFoundError: `/home/claude/data.csv`** | **Step 1 was skipped or incomplete.** Go back: (1) Use `web_fetch` to download CSV, (2) Use `create_file` to write to disk, (3) Verify with `ls`. | Critical — cannot proceed without file |
 | `web_fetch` fails | Report that the file could not be fetched | Fail-fast; don't retry indefinitely |
 | Column not found | Print available columns; ask for clarification | Keep schema dict handy; don't re-scan |
 | CSV is very large (>500 MB) | Use chunked reading: `pd.read_csv(..., chunksize=10000)` | Prevents memory overflow |
@@ -252,9 +259,10 @@ result = df_2021['region'].value_counts()  # No filtering needed
 **User:** What datasets are available?
 
 **Claude should:**
-1. Load CSV with dtype optimization (Step 2)
-2. Build schema index (Step 3)
-3. Show a summary (limit output, use `value_counts()` for aggregates):
+1. **Step 1:** Fetch CSV using `web_fetch`, write to `/home/claude/data.csv` using `create_file`, verify with file listing.
+2. **Step 2:** Load CSV with dtype optimization
+3. **Step 3:** Build schema index
+4. **Step 4:** Show a summary (limit output, use `value_counts()` for aggregates):
    ```python
    print(f"Total datasets: {len(df)}")
    print(df['category'].value_counts().head(10))
@@ -265,6 +273,7 @@ result = df_2021['region'].value_counts()  # No filtering needed
 **User:** Find all datasets related to healthcare.
 
 **Claude should:**
+- (CSV already loaded from previous query — skip Step 1)
 - Use the cached DataFrame (no reload)
 - Use vectorized string search with boolean indexing:
   ```python
@@ -278,6 +287,7 @@ result = df_2021['region'].value_counts()  # No filtering needed
 **User:** What's the distribution of datasets by year?
 
 **Claude should:**
+- Reuse cached DataFrame (already in memory)
 - Convert year column to numeric if needed
 - Use `.value_counts()` (vectorized):
   ```python
