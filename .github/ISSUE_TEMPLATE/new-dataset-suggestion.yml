@@ -476,9 +476,32 @@ body:
       description: "Please select the data redistribution policy (i.e., how the data or derivatives can be redistributed) for this dataset. Choose all that apply."
       multiple: true
       options:
-        - Research and Commercial Redistribution Allowed
-        - Only Research Redistribution Allowed
-        - No Redistribution Allowed
+        - Allowed
+        - Restricted
+    validations:
+      required: false
+  
+  - type: dropdown
+    id: research_use_policy
+    attributes:
+      label: Research Use Policy
+      description: "Please select the research use policy for this dataset. Choose all that apply."
+      multiple: true
+      options:
+        - Allowed
+        - Restricted
+    validations:
+      required: false
+
+  - type: dropdown
+    id: commercial_use_policy
+    attributes:
+      label: Commercial Use Policy
+      description: "Please select the commercial use policy for this dataset. Choose all that apply."
+      multiple: true
+      options:
+        - Allowed
+        - Restricted
     validations:
       required: false
   
