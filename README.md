@@ -4,7 +4,7 @@
 
 # Welcome to the BoneHub's Public Datasets
 
-This repository is a curated collection of publicly available datasets that include **3D bone models** or **3D medical imaging data** (such as CT and MRI scans) from which **3D bone models can be extracted**. It is designed as a centralized resource for researchers, engineers, and developers working in:
+This repository is a curated collection of publicly available datasets that include **3D bone shapes** or **3D medical images** (such as CT and MRI scans) from which **3D bone shapes can be extracted**. It is designed as a centralized resource for researchers, engineers, and developers working in:
 
 - Biomedical engineering  
 - Medical image analysis  
@@ -15,6 +15,26 @@ This repository is a curated collection of publicly available datasets that incl
 We provide structured metadata, links, and usage details for each dataset in both human-readable and machine-readable formats. The aim is to simplify dataset discovery and comparison across anatomical regions and imaging modalities.
 
 > 📌 *Note: This repository does not host any original dataset files — only information and links are provided.*
+
+## 📚 Citation & Acknowledgment
+
+If you have found this resource useful for your research, presentations, or publications, we kindly request that you cite our work. Your acknowledgment helps support the continued development and maintenance of BoneHub's Public Datasets.
+
+- Cite our paper
+  
+  [(paper doi pending)]()
+
+- Cite this repository
+  ```
+  @misc{AlaviAsseln2025BoneHubPublicDatasets,
+  author = {S.H. Alavi, M. Asseln},
+  title = {A Curated Collection of Datasets with 3D Bone Shapes and Medical Image Data},
+  year = {2025},
+  howpublished = {\url{https://github.com/BoneHub/Public-Datasets},
+  note = {Accessed: [Insert Date]}
+  }
+  ```
+
 
 ## 🔍 Usage Instructions
 
@@ -214,45 +234,23 @@ filtered = df[
 filtered.to_csv('filtered_mri_datasets.csv', index=False)
 print(f"Saved {len(filtered)} filtered datasets to 'filtered_mri_datasets.csv'")
 ```
-
 ---
 
+## 🤝 Contribution - Let's Expand the List of Datasets
 
+We welcome contributions from the community to expand the list of datasets. You may:
 
-## 🧾 Citation
+- **[Suggest a new dataset](https://github.com/BoneHub/Public-Datasets/issues/new?template=new-dataset-suggestion.yml)** via the provided template.
 
-If you use this resource in your research, presentations, or software, please cite both our paper and our repository.
+- Report incorrect information by submitting an [issue](https://github.com/BoneHub/Public-Datasets/issues/new).
 
-- **Cite our paper**
-  
-  [paper will be added here]()
-
-- **Cite the GitHub repository**
-```
-@misc{AlaviAsseln2025BoneHubPublicDatasets,
-author = {S.H. Alavi, M. Asseln},
-title = {A Curated Collection of Datasets with 3D Bone Shapes and Medical Image Data},
-year = {2025},
-howpublished = {\url{https://github.com/BoneHub/Public-Datasets},
-note = {Accessed: [Insert Date]}
-}
-```
+- You can also make direct changes to [datasets.csv](data/datasets.csv) by a pull request!
 
 ## 📜 License
 
 All dataset summaries, tables, and documentation in this repository are licensed under the:
 
 **Creative Commons Attribution 4.0 International ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))**
-
-## 🤝 Contributing
-
-We welcome contributions from the community to improve this resource. You can:
-
-- Suggest a new dataset by submitting this [dataset suggestion form](https://github.com/BoneHub/Public-Datasets/issues/new?template=new-dataset-suggestion.yml)
-
-- Report incorrect information by submitting an [issue](https://github.com/BoneHub/Public-Datasets/issues/new)
-
-- You can also make direct changes to `data/datasets.csv` by a pull request!
    
 ## ⚠️ Disclaimer
 
