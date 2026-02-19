@@ -151,3 +151,4 @@ Dataset Name,Access Link,Related Paper,Country,Year,Size,Remarks,Medical Images 
 ,,,China,2025,,,,MRI,Original,,Knee,Knee,,,,,,,1190,,,,Open Access,Allowed,,,CC BY 4.0
 ,,,Denmark,2025,,,,MRI,Adopted,,Neurocranium,Neurocranium,,,,,,,11187,,,,Open Access,Allowed; Restricted,,,"mixed, depends on the source datasets; CC BY-NC 4.0; CC BY-SA 4.0; CC0 1.0; Other"
 ,,,Switzerland,2018,,,,MRI,Original,,Lumbar Spine,Lumbar Spine,,,,,,,25,,,,Restricted,Restricted,,,N/A
+new dataset,url.com,,,,,,None,,,,,,,,,,,,,,,,,,,,
