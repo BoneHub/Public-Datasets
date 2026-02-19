@@ -1,6 +1,4 @@
-<!-- # **See the datasets [here](https://github.com/BoneHub/BoneHub-Datasets/blob/main/data/datasets.md)** -->
-
-> ℹ️ List of datasets will be published upon our paper acceptance
+# **[Access complete list of datasets](https://github.com/BoneHub/Public-Datasets/blob/main/data/datasets.csv)**
 
 # Welcome to the BoneHub's Public Datasets
 
