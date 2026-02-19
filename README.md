@@ -71,7 +71,7 @@ If you're not comfortable with manual filtering or want instant results, we've p
 
 - *"Find datasets with Whole Body in Primary Imaged Regions and Research Use Policy = Allowed."*
 
-- *"What datasets list Cervical Spine in Primary Imaged Regions and have Mesh Model = Available?"*
+- *"What datasets list Pelvis in Primary Imaged Regions and have Mesh Model = Available?"*
 
 The AI assistant will search through the entire dataset collection and provide you with a filtered list matching your criteria.
 
