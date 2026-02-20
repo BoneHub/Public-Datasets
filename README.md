@@ -1,8 +1,15 @@
-## ✅ Public Datasets
+## Table of Contents
 
-> **[→ Browse the Complete Dataset Collection](data/bonehub_public_datasets.csv)**
+### ✅ [Browse the Complete Dataset Collection](data/bonehub_public_datasets.csv)
+### 📖 [Introduction](#-introduction---welcome-to-the-bonehubs-public-datasets)
+### 📚 [Citation & Acknowledgment](#-citation--acknowledgment)
+### 🔍 [Usage Instructions](#-usage-instructions)
+### 🤝 [Contribution](#-contribution---lets-expand-the-list-of-datasets)
+### 📜 [License](#-license)
+### ⚠️ [Disclaimer](#️-disclaimer)
+### 📬 [Contact](#-contact)
 
-# Welcome to the BoneHub's Public Datasets
+## Introduction - Welcome to the BoneHub's Public Datasets
 
 This repository is a curated collection of publicly available datasets that include **3D bone shapes** or **3D medical images** (such as CT and MRI scans) from which **3D bone shapes can be extracted**. It is designed as a centralized resource for researchers, engineers, and developers working in:
 
