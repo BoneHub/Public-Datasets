@@ -163,11 +163,11 @@ We welcome contributions from the community to expand the list of datasets. You 
 
 ## Citation & Acknowledgment
 
-If you have found this resource useful for your research, presentations, or publications, we kindly request that you cite our work. Your acknowledgment helps support the continued development and maintenance of BoneHub's Public Datasets.
+If you have found this resource useful for your work, we kindly request that you cite us. Your acknowledgment helps support the continued development and maintenance of this resource.
 
 - Cite our paper
   
-  [(paper doi pending)]()
+  (paper doi pending)
 
 - Cite this repository
   ```

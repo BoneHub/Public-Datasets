@@ -1,3 +1,10 @@
+"""
+This script is designed to be called from a GitHub Action workflow when a new dataset suggestion issue
+is created. It takes the issue body and title as input, parses the markdown content of the issue body to
+extract the dataset information, normalizes the values (especially for dropdown fields), and appends the new
+dataset information as a new row in a CSV file located at `data/bonehub_public_datasets.csv`.
+"""
+
 import sys
 import csv
 import re
