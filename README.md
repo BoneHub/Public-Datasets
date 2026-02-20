@@ -41,8 +41,7 @@ If you're not comfortable with manual filtering or want instant results, we've p
 2. **Upload both files to Claude.ai:**  
    - Go to [claude.ai](https://claude.ai)
    - Start a new chat
-   - Click the attachment button (📎)
-   - Upload **both** the `.md` skill file AND the `.csv` data file
+   - Upload **both** the `.md` skill file AND the `.csv` data file. You can simply drag & drop files into the chat window.
 
 3. **Ask your question:**  
    Simply describe what you're looking for in natural language. Claude will filter the datasets and return matching results.
