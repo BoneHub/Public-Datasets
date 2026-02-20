@@ -1,13 +1,12 @@
 ## Table of Contents
 
 ### ✅ [Browse the Complete Dataset Collection](data/bonehub_public_datasets.csv)
-### 📖 [Introduction](#-introduction---welcome-to-the-bonehubs-public-datasets)
-### 📚 [Citation & Acknowledgment](#-citation--acknowledgment)
-### 🔍 [Usage Instructions](#-usage-instructions)
-### 🤝 [Contribution](#-contribution---lets-expand-the-list-of-datasets)
-### 📜 [License](#-license)
-### ⚠️ [Disclaimer](#️-disclaimer)
-### 📬 [Contact](#-contact)
+### 📖 [Introduction](#introduction---welcome-to-the-bonehubs-public-datasets)
+### 🔍 [Usage Instructions](#usage-instructions)
+### 🤝 [Contribution](#contribution---lets-expand-the-list-of-datasets)
+### 📚 [Citation & Acknowledgment](#citation--acknowledgment)
+### ⚠️ [Disclaimer](#disclaimer)
+### 📬 [Contact](#contact)
 
 ## Introduction - Welcome to the BoneHub's Public Datasets
 
@@ -23,27 +22,7 @@ We provide structured metadata, links, and usage details for each dataset in bot
 
 > 📌 *Note: This repository does not host any original dataset files — only information and links are provided.*
 
-## 📚 Citation & Acknowledgment
-
-If you have found this resource useful for your research, presentations, or publications, we kindly request that you cite our work. Your acknowledgment helps support the continued development and maintenance of BoneHub's Public Datasets.
-
-- Cite our paper
-  
-  [(paper doi pending)]()
-
-- Cite this repository
-  ```
-  @misc{AlaviAsseln2025BoneHubPublicDatasets,
-  author = {S.H. Alavi, M. Asseln},
-  title = {A Curated Collection of Datasets with 3D Bone Shapes and Medical Image Data},
-  year = {2025},
-  howpublished = {\url{https://github.com/BoneHub/Public-Datasets},
-  note = {Accessed: [Insert Date]}
-  }
-  ```
-
-
-## 🔍 Usage Instructions
+## Usage Instructions
 
 The complete dataset collection is available in [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv). You can filter and search through the datasets using one of the following methods:
 
@@ -172,7 +151,7 @@ print(femur_pelvis[['Dataset Name', 'Year', 'Number of Subjects', 'Mesh Model', 
 ```
 ---
 
-## 🤝 Contribution - Let's Expand the List of Datasets
+## Contribution - Let's Expand the List of Datasets
 
 We welcome contributions from the community to expand the list of datasets. You may:
 
@@ -182,19 +161,32 @@ We welcome contributions from the community to expand the list of datasets. You 
 
 - You can also make direct changes to [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv) by a pull request!
 
-## 📜 License
+## Citation & Acknowledgment
 
-All dataset summaries, tables, and documentation in this repository are licensed under the:
+If you have found this resource useful for your research, presentations, or publications, we kindly request that you cite our work. Your acknowledgment helps support the continued development and maintenance of BoneHub's Public Datasets.
 
-**Creative Commons Attribution 4.0 International ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))**
+- Cite our paper
+  
+  [(paper doi pending)]()
+
+- Cite this repository
+  ```
+  @misc{AlaviAsseln2025BoneHubPublicDatasets,
+  author = {S.H. Alavi, M. Asseln},
+  title = {A Curated Collection of Datasets with 3D Bone Shapes and Medical Image Data},
+  year = {2025},
+  howpublished = {\url{https://github.com/BoneHub/Public-Datasets},
+  note = {Accessed: [Insert Date]}
+  }
+  ```
    
-## ⚠️ Disclaimer
+## Disclaimer
 
 This repository **does not host** any datasets. It only provides links and metadata to publicly available datasets. Users are responsible for reviewing and complying with each dataset's licensing terms, restrictions, and usage agreements as provided by the original source.
 
-## 📬 Contact
+## Contact
 
-Maintained by: **Hamid Alavi**, **Malte Asseln**
+This repository is maintained by: **Hamid Alavi** and **Malte Asseln**
 
 Affiliation: Department of Biomechanical Engineering, University of Twente, The Netherlands.
 
