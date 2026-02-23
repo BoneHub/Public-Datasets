@@ -9,7 +9,7 @@ body:
     attributes:
       value: |
         ### Thank you for your interest in contributing to this dataset registry! Please fill out this form to suggest a new dataset. We will gladly review your submission.
-        > 📌 *The suggested dataset must include **3D models** (e.g. STL meshes) AND/OR **3D images** (e.g. CT, MRI) of bones.*
+        > 📌 *The suggested dataset must include **3D bone shapes** (as segmentation masks or surface meshes) AND/OR **3D images** (CT, MRI) from which 3D bone shapes could be generated.*
         > 📌 *We highly encourage you to fill out all the fields that are relevant to the dataset you are suggesting. If a field does not apply, you can leave it blank.*
         > 📌 *Use `;` to separate multiple entries within a field where needed.*
 
