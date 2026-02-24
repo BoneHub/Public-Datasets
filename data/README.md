@@ -1,6 +1,4 @@
-# BoneHub Public Datasets Table
-
-This directory contains the [bonehub_public_datasets.csv](bonehub_public_datasets.csv) file, which is a comprehensive registry of publicly available 3D bone shape and medical imaging datasets.
+# 👉 [BoneHub Public Datasets](bonehub_public_datasets.csv) 👈
 
 ## Column Descriptions
 

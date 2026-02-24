@@ -1,6 +1,6 @@
 ## Table of Contents
 
-### ✅ [Browse the Complete Dataset Collection](data/bonehub_public_datasets.csv)
+### ✅ [Browse the Complete Dataset Collection](data/README.md)
 ### 📖 [Introduction](#introduction---welcome-to-the-bonehubs-public-datasets)
 ### 🔍 [Usage Instructions](#usage-instructions)
 ### 🤝 [Contribution](#contribution---lets-expand-the-list-of-datasets)
@@ -24,7 +24,7 @@ We provide structured metadata, links, and usage details for each dataset in bot
 
 ## Usage Instructions
 
-The complete dataset collection is available in [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv). You can filter and search through the datasets using one of the following methods:
+The complete dataset collection is available in [data/bonehub_public_datasets.csv](data/README.md). You can filter and search through the datasets using one of the following methods:
 
 ---
 
