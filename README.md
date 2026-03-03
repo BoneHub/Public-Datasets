@@ -34,7 +34,7 @@ The complete dataset collection is available in [data/bonehub_public_datasets.cs
 
 ---
 
-### Interactive Web Interface (Recommended) 🌐
+### Option 1: Interactive Web Interface (Recommended) 🌐
 
 **[Visit our interactive website](https://bonehub.github.io/Public-Datasets/)** to browse and search datasets with an easy-to-use interface.
 
