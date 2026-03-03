@@ -126,23 +126,77 @@ section h2 {
     background-color: var(--link-hover);
 }
 
+.btn-export {
+    padding: 0.75rem 1.5rem;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    font-weight: 600;
+}
+
+.btn-export:hover {
+    background-color: #229954;
+}
+
 .stats {
     padding: 0.75rem;
     background-color: var(--hover-color);
     border-radius: 4px;
     font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-hint {
+    flex-shrink: 0;
+    font-weight: normal;
 }
 
 /* Table Section */
 .table-container {
     overflow-x: auto;
+    overflow-y: auto;
     margin-top: 1rem;
+    max-height: 600px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /* Improve horizontal scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--hover-color);
+}
+
+.table-container::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: var(--hover-color);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--link-hover);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    background-color: white;
 }
 
 thead {
@@ -151,6 +205,14 @@ thead {
     background-color: var(--primary-color);
     color: white;
     z-index: 10;
+}
+
+/* Filter row sticky below header */
+#filterRow {
+    position: sticky;
+    top: 48px; /* Adjust based on header height */
+    background-color: #f8f9fa;
+    z-index: 9;
 }
 
 th {
@@ -172,7 +234,8 @@ td:first-child {
     left: 0;
     z-index: 5;
     background-color: var(--card-background);
-    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+    font-weight: 600;
 }
 
 thead th:first-child {
@@ -186,7 +249,15 @@ thead th:first-child {
 }
 
 tbody tr:hover td:first-child {
-    background-color: var(--hover-color);
+    background-color: #e3f2fd;
+}
+
+tbody tr:nth-child(even) td:first-child {
+    background-color: #fafafa;
+}
+
+tbody tr:nth-child(even):hover td:first-child {
+    background-color: #e3f2fd;
 }
 
 /* Column visibility */
@@ -227,7 +298,15 @@ tbody tr {
 }
 
 tbody tr:hover {
-    background-color: var(--hover-color);
+    background-color: #e3f2fd;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+tbody tr:nth-child(even):hover {
+    background-color: #e3f2fd;
 }
 
 td {
@@ -378,4 +457,39 @@ footer a:hover {
     cursor: pointer;
     user-select: none;
     font-size: 0.9rem;
+}
+
+/* Citation Box */
+.citation-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid var(--secondary-color);
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+}
+
+.citation-box h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.citation-box pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0;
+}
+
+.citation-box code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* Contact Section */
+.contact p {
+    margin: 0.5rem 0;
 }

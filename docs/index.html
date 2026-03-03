@@ -1,41 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoneHub Public Datasets</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <header>
         <div class="container">
-            <h1>🦴 BoneHub Public Datasets</h1>
-            <p class="subtitle">A Curated Collection of Public Datasets with 3D Bone Shapes</p>
+            <h1>BoneHub Public Datasets</h1>
+            <p class="subtitle">A Guide for finding 3D bone shapes & medical image datasets</p>
         </div>
     </header>
 
     <main class="container">
-        <section class="intro">
-            <h2>📖 Introduction</h2>
+        <section class="about">
+            <h2>📖 About</h2>
             <p>
-                This repository is a curated collection of publicly available datasets that include <strong>3D bone shapes</strong> 
-                or <strong>3D medical images</strong> (such as CT and MRI scans) from which <strong>3D bone shapes can be extracted</strong>. 
-                It is designed as a centralized resource for researchers, engineers, and developers working in:
-            </p>
-            <ul>
-                <li>Biomedical engineering</li>
-                <li>Medical image analysis</li>
-                <li>Biomechanics</li>
-                <li>Computer-aided diagnosis</li>
-                <li>3D reconstruction and modeling</li>
-            </ul>
-            <p>
-                We provide structured metadata, links, and usage details for each dataset in both human-readable and 
-                machine-readable formats. The aim is to simplify dataset discovery and comparison across anatomical 
-                regions and imaging modalities.
+                A curated collection of publicly available datasets with <strong>3D bone shapes</strong> or
+                <strong>medical images</strong>
+                (CT, MRI) from which bone shapes can be extracted. Designed for researchers in biomedical engineering,
+                medical imaging,
+                biomechanics, and related fields.
             </p>
             <p class="note">
-                <strong>📌 Note:</strong> This repository does not host any original dataset files — only information and links are provided.
+                <strong>📌 Note:</strong> This repository does not host datasets — only metadata and links are provided.
             </p>
         </section>
 
@@ -45,9 +37,13 @@
                 <input type="text" id="searchInput" placeholder="Search datasets..." aria-label="Search datasets">
                 <button id="clearFilters" class="btn-secondary">Clear Filters</button>
                 <button id="toggleColumns" class="btn-secondary">Show/Hide Columns</button>
+                <button id="exportCSV" class="btn-export">📥 Export to CSV</button>
             </div>
             <div class="stats">
                 <span id="datasetCount">Loading datasets...</span>
+                <span class="filter-hint" style="float: right; font-style: italic; color: #666; font-size: 0.85rem;">
+                    💡 Tip: Use &gt;, &lt;, &gt;=, &lt;=, = in numeric columns (e.g., "&gt;100" in Number of Subjects)
+                </span>
             </div>
             <div id="columnToggles" class="column-toggles" style="display: none;">
                 <h3>Select Columns to Display</h3>
@@ -55,9 +51,7 @@
                     <!-- Column checkboxes will be dynamically generated -->
                 </div>
             </div>
-        </section>
 
-        <section class="table-section">
             <div class="table-container">
                 <table id="datasetsTable">
                     <thead>
@@ -77,31 +71,52 @@
 
         <section class="contribution">
             <h2>🤝 Contribution</h2>
-            <p>
-                We welcome contributions! If you know of a dataset that should be included, please submit an issue or 
-                pull request on our <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a>.
-            </p>
+            <p>You may suggest a new dataset via this <strong><a
+                        href="https://github.com/BoneHub/Public-Datasets/issues/new?template=new-dataset-suggestion.yml"
+                        target="_blank">form</a></strong>. We welcome contributions from the community to expand the
+                list of datasets.</p>
         </section>
 
         <section class="citation">
             <h2>📚 Citation & Acknowledgment</h2>
+            <p>If you have found this resource useful for your work, we kindly request that you cite us. Your
+                acknowledgment helps support the continued development and maintenance of this resource.</p>
+            <div class="citation-box">
+                <h3>Cite our paper:</h3>
+                <pre>Paper DOI pending</pre>
+                <h3>Cite our github repository:</h3>
+                <pre><code>@misc{AlaviAsseln2025BoneHubPublicDatasets,
+  author = {S.H. Alavi, M. Asseln},
+  title = {A Guide for finding 3D bone shapes & medical image datasets},
+  year = {2025},
+  howpublished = {\url{https://github.com/BoneHub/Public-Datasets}},
+  note = {Accessed: [Insert Date]}
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="contact">
+            <h2>📬 Contact</h2>
+            <p>This repository is maintained by <strong>Hamid Alavi</strong> and <strong>Malte Asseln</strong></p>
+            <p>Department of Biomechanical Engineering, University of Twente, The Netherlands</p>
             <p>
-                If you use this resource in your research, please cite our repository and acknowledge the original 
-                dataset authors and publishers. Visit our 
-                <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a> for citation details.
+                <a href="mailto:hamid.alavi@utwente.nl">hamid.alavi@utwente.nl</a> |
+                <a href="mailto:m.asseln@utwente.nl">m.asseln@utwente.nl</a>
             </p>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>
-                This is a community-driven resource. For questions or feedback, please visit our 
-                <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a>.
-            </p>
             <p class="disclaimer">
-                <strong>⚠️ Disclaimer:</strong> This repository provides links and information about publicly available datasets. 
-                We do not host or own these datasets. Users must comply with the terms and licenses of each individual dataset.
+                <strong>⚠️ Disclaimer:</strong> This repository does not host any datasets. It only provides links and
+                metadata.
+                Users are responsible for reviewing and complying with each dataset's licensing terms and usage
+                agreements.
+            </p>
+            <p>
+                Visit our <a href="https://github.com/BoneHub/Public-Datasets" target="_blank">GitHub repository</a> for
+                more information.
             </p>
         </div>
     </footer>
@@ -109,4 +124,5 @@
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>

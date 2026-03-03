@@ -56,7 +56,15 @@ function initializeTable() {
         const input = document.createElement('input');
         input.type = 'text';
         input.className = 'filter-input';
-        input.placeholder = `Filter ${header}...`;
+        
+        // Add helpful placeholder for numeric columns
+        if (isNumericColumn(header)) {
+            input.placeholder = `e.g., >100 or <50`;
+            input.title = 'Supports: >, <, >=, <=, = followed by a number';
+        } else {
+            input.placeholder = `Filter ${header}...`;
+        }
+        
         input.dataset.column = header;
         
         input.addEventListener('input', function(e) {
@@ -154,9 +162,53 @@ function handleColumnFilter(column, value) {
     if (value.trim() === '') {
         delete columnFilters[column];
     } else {
-        columnFilters[column] = value.toLowerCase();
+        columnFilters[column] = value.trim();
     }
     applyFilters();
+}
+
+// Parse numeric comparison from filter value
+function parseNumericComparison(filterValue) {
+    const operators = [
+        { regex: /^>=\s*(.+)/, op: '>=' },
+        { regex: /^<=\s*(.+)/, op: '<=' },
+        { regex: /^>\s*(.+)/, op: '>' },
+        { regex: /^<\s*(.+)/, op: '<' },
+        { regex: /^=\s*(.+)/, op: '=' }
+    ];
+    
+    for (let { regex, op } of operators) {
+        const match = filterValue.match(regex);
+        if (match) {
+            const value = parseFloat(match[1]);
+            if (!isNaN(value)) {
+                return { operator: op, value: value };
+            }
+        }
+    }
+    
+    return null;
+}
+
+// Apply numeric filter
+function applyNumericFilter(cellValue, comparison) {
+    const numValue = parseFloat(cellValue);
+    if (isNaN(numValue)) return false;
+    
+    switch (comparison.operator) {
+        case '>': return numValue > comparison.value;
+        case '<': return numValue < comparison.value;
+        case '>=': return numValue >= comparison.value;
+        case '<=': return numValue <= comparison.value;
+        case '=': return numValue === comparison.value;
+        default: return false;
+    }
+}
+
+// Check if column is likely numeric
+function isNumericColumn(columnName) {
+    const numericColumns = ['Number of Subjects', 'Year', 'Size', 'Number of Samples'];
+    return numericColumns.some(col => columnName.includes(col));
 }
 
 // Apply all filters
@@ -166,8 +218,21 @@ function applyFilters() {
     filteredData = allData.filter(row => {
         // Apply column filters
         for (let [column, filterValue] of Object.entries(columnFilters)) {
-            const cellValue = String(row[column] || '').toLowerCase();
-            if (!cellValue.includes(filterValue)) {
+            const cellValue = String(row[column] || '');
+            
+            // Check for numeric comparison operators
+            if (isNumericColumn(column)) {
+                const comparison = parseNumericComparison(filterValue);
+                if (comparison) {
+                    if (!applyNumericFilter(cellValue, comparison)) {
+                        return false;
+                    }
+                    continue;
+                }
+            }
+            
+            // Default text-based filtering
+            if (!cellValue.toLowerCase().includes(filterValue.toLowerCase())) {
                 return false;
             }
         }
@@ -282,6 +347,12 @@ function setupEventListeners() {
             columnToggles.style.display = 'none';
         }
     });
+    
+    // Export CSV button
+    const exportButton = document.getElementById('exportCSV');
+    exportButton.addEventListener('click', function() {
+        exportToCSV();
+    });
 }
 
 // Show error message
@@ -293,4 +364,50 @@ function showError(message) {
     td.textContent = message;
     tr.appendChild(td);
     tbody.appendChild(tr);
+}
+
+// Export filtered data to CSV
+function exportToCSV() {
+    if (filteredData.length === 0) {
+        alert('No data to export. Please adjust your filters.');
+        return;
+    }
+    
+    // Get visible columns only
+    const columnsToExport = allColumns.filter(col => visibleColumns.has(col));
+    
+    // Create CSV content
+    let csvContent = '';
+    
+    // Add header row
+    csvContent += columnsToExport.map(col => `"${col}"`).join(',') + '\n';
+    
+    // Add data rows
+    filteredData.forEach(row => {
+        const rowData = columnsToExport.map(col => {
+            let value = row[col] || '';
+            // Escape quotes and wrap in quotes if contains comma, newline, or quote
+            value = value.toString().replace(/"/g, '""');
+            if (value.includes(',') || value.includes('\n') || value.includes('"')) {
+                value = `"${value}"`;
+            } else {
+                value = `"${value}"`;
+            }
+            return value;
+        });
+        csvContent += rowData.join(',') + '\n';
+    });
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `bonehub_datasets_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }

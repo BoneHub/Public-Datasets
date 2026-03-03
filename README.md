@@ -187,7 +187,7 @@ If you have found this resource useful for your work, we kindly request that you
   ```
   @misc{AlaviAsseln2025BoneHubPublicDatasets,
   author = {S.H. Alavi, M. Asseln},
-  title = {A Curated Collection of Datasets with 3D Bone Shapes and Medical Image Data},
+  title = {A Guide for finding 3D bone shapes & medical image datasets},
   year = {2025},
   howpublished = {\url{https://github.com/BoneHub/Public-Datasets},
   note = {Accessed: [Insert Date]}
