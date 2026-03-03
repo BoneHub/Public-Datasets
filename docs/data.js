@@ -1,8 +1,8 @@
 // Auto-generated from bonehub_public_datasets.csv
-    // Do not edit manually - run scripts/update_webpage.py instead
-    // Last updated: 2026-03-03 13:58:15
+// Do not edit manually - run scripts/update_webpage.py instead
+// Last updated: 2026-03-03 14:06:11
 
-    const datasetsData = [
+const datasetsData = [
   {
     "Dataset Name": "3D Visible Human",
     "Access Link": "https://doi.org/10.56902/COB.vh.2022.0",
@@ -4564,4 +4564,3 @@
     "License": "N/A"
   }
 ];
-    
