@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔥 ✨ 🌐 [**Browse Datasets on Our Interactive Webpage!**](https://bonehub.github.io/Public-Datasets/) 🌐 ✨ 🔥
+# ✨[**Browse Datasets on Our Interactive Webpage**](https://bonehub.github.io/Public-Datasets/)✨
 
 ### 👆 **Click above to explore our easy-to-use dataset browser** 👆
 
