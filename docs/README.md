@@ -21,7 +21,7 @@ To manually update the webpage data:
 python scripts/update_webpage.py
 ```
 
-This will read `data/bonehub_public_datasets.csv` and regenerate `webpage/data.js`.
+This will read `data/bonehub_public_datasets.csv` and regenerate `docs/data.js`.
 
 ### Automatic Update via GitHub Actions
 
@@ -50,7 +50,7 @@ To test the webpage locally:
 2. Serve the webpage folder using a simple HTTP server:
    ```bash
    # Python 3
-   cd webpage
+   cd docs
    python -m http.server 8000
    ```
 
@@ -63,7 +63,7 @@ To publish this website on GitHub Pages:
 1. Push all changes to your GitHub repository
 2. Go to repository Settings → Pages
 3. Under "Source", select "Deploy from a branch"
-4. Select branch "main" and folder "/webpage"
+4. Select branch "main" and folder "/docs"
 5. Click "Save"
 6. Your site will be published at `https://yourusername.github.io/repository-name/`
 
