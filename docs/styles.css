@@ -223,6 +223,33 @@ th {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 1.6rem;
+}
+
+th.sortable::after {
+    content: '↕';
+    position: absolute;
+    right: 0.5rem;
+    opacity: 0.45;
+    font-size: 0.85rem;
+}
+
+th.sortable.sort-active::after {
+    opacity: 1;
+}
+
+th.sortable.sort-asc::after {
+    content: '▲';
+}
+
+th.sortable.sort-desc::after {
+    content: '▼';
+}
+
 th:last-child {
     border-right: none;
 }

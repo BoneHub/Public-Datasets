@@ -4,6 +4,8 @@ let filteredData = [];
 let columnFilters = {};
 let visibleColumns = new Set();
 let allColumns = [];
+let sortColumn = null;
+let sortDirection = 'asc';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -47,6 +49,10 @@ function initializeTable() {
         th.textContent = header;
         th.dataset.column = header;
         th.dataset.columnIndex = index;
+        th.classList.add('sortable');
+        th.addEventListener('click', function() {
+            handleSort(header);
+        });
         headerRow.appendChild(th);
         
         // Filter cell
@@ -76,6 +82,68 @@ function initializeTable() {
     });
     
     applyColumnVisibility();
+    updateSortIndicators();
+}
+
+function handleSort(column) {
+    if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+    }
+
+    sortFilteredData();
+    updateDisplay();
+}
+
+function normalizeSortValue(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
+}
+
+function compareValues(a, b, column) {
+    const valueA = normalizeSortValue(a[column]);
+    const valueB = normalizeSortValue(b[column]);
+
+    if (valueA === '' && valueB === '') return 0;
+    if (valueA === '') return 1;
+    if (valueB === '') return -1;
+
+    const numA = parseFloat(valueA);
+    const numB = parseFloat(valueB);
+    const bothNumeric = !Number.isNaN(numA) && !Number.isNaN(numB);
+
+    if (bothNumeric) {
+        return numA - numB;
+    }
+
+    return valueA.localeCompare(valueB, undefined, {
+        numeric: true,
+        sensitivity: 'base'
+    });
+}
+
+function sortFilteredData() {
+    if (!sortColumn) return;
+
+    filteredData.sort((a, b) => {
+        const result = compareValues(a, b, sortColumn);
+        return sortDirection === 'asc' ? result : -result;
+    });
+}
+
+function updateSortIndicators() {
+    const headerRow = document.getElementById('tableHeader');
+    if (!headerRow) return;
+
+    Array.from(headerRow.children).forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc', 'sort-active');
+        if (th.dataset.column === sortColumn) {
+            th.classList.add('sort-active');
+            th.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+    });
 }
 
 // Initialize column visibility toggles
@@ -247,6 +315,8 @@ function applyFilters() {
         
         return true;
     });
+
+    sortFilteredData();
     
     updateDisplay();
 }
@@ -288,6 +358,7 @@ function updateDisplay() {
     }
     
     applyColumnVisibility();
+    updateSortIndicators();
     updateStats();
 }
 
