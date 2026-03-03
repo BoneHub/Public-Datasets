@@ -15,9 +15,8 @@
     </header>
 
     <main class="container">
-        <!-- About Section -->
-        <section id="about">
-            <h2>About This Collection</h2>
+        <section class="intro">
+            <h2>📖 Introduction</h2>
             <p>
                 This repository is a curated collection of publicly available datasets that include <strong>3D bone shapes</strong> 
                 or <strong>3D medical images</strong> (such as CT and MRI scans) from which <strong>3D bone shapes can be extracted</strong>. 
@@ -31,149 +30,83 @@
                 <li>3D reconstruction and modeling</li>
             </ul>
             <p>
-                We provide structured metadata, links, and usage details for each dataset in both human-readable and machine-readable formats. 
-                The aim is to simplify dataset discovery and comparison across anatomical regions and imaging modalities.
+                We provide structured metadata, links, and usage details for each dataset in both human-readable and 
+                machine-readable formats. The aim is to simplify dataset discovery and comparison across anatomical 
+                regions and imaging modalities.
             </p>
             <p class="note">
-                📌 <em>Note: This repository does not host any original dataset files — only information and links are provided.</em>
+                <strong>📌 Note:</strong> This repository does not host any original dataset files — only information and links are provided.
             </p>
         </section>
 
-        <!-- Dataset Table Section -->
-        <section id="datasets">
-            <h2>Dataset Collection</h2>
-            
-            <!-- Search and Filter Controls -->
-            <div class="controls">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search datasets...">
-                </div>
-                <div class="filter-info">
-                    <span id="resultsCount">Loading datasets...</span>
+        <section class="search-section">
+            <h2>🔍 Browse Datasets</h2>
+            <div class="search-controls">
+                <input type="text" id="searchInput" placeholder="Search datasets..." aria-label="Search datasets">
+                <button id="clearFilters" class="btn-secondary">Clear Filters</button>
+                <button id="toggleColumns" class="btn-secondary">Show/Hide Columns</button>
+            </div>
+            <div class="stats">
+                <span id="datasetCount">Loading datasets...</span>
+            </div>
+            <div id="columnToggles" class="column-toggles" style="display: none;">
+                <h3>Select Columns to Display</h3>
+                <div id="columnCheckboxes" class="checkbox-grid">
+                    <!-- Column checkboxes will be dynamically generated -->
                 </div>
             </div>
+        </section>
 
-            <!-- Table Container -->
+        <section class="table-section">
             <div class="table-container">
                 <table id="datasetsTable">
                     <thead>
-                        <tr>
-                            <th data-column="name">
-                                Dataset Name
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th data-column="year">
-                                Year
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th data-column="country">
-                                Country
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th data-column="modality">
-                                Imaging Modality
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th data-column="subjects">
-                                Subjects
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th data-column="access">
-                                Access Policy
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th data-column="license">
-                                License
-                                <span class="sort-arrows">
-                                    <span class="arrow">▲</span>
-                                    <span class="arrow">▼</span>
-                                </span>
-                            </th>
-                            <th class="actions-column">Actions</th>
+                        <tr id="tableHeader">
+                            <!-- Headers will be dynamically generated -->
                         </tr>
-                        <tr class="filter-row">
-                            <th><input type="text" class="column-filter" data-column="name" placeholder="Filter..."></th>
-                            <th><input type="text" class="column-filter" data-column="year" placeholder="Filter..."></th>
-                            <th><input type="text" class="column-filter" data-column="country" placeholder="Filter..."></th>
-                            <th><input type="text" class="column-filter" data-column="modality" placeholder="Filter..."></th>
-                            <th><input type="text" class="column-filter" data-column="subjects" placeholder="Filter..."></th>
-                            <th><input type="text" class="column-filter" data-column="access" placeholder="Filter..."></th>
-                            <th><input type="text" class="column-filter" data-column="license" placeholder="Filter..."></th>
-                            <th></th>
+                        <tr id="filterRow">
+                            <!-- Filter inputs will be dynamically generated -->
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <!-- Data will be injected by JavaScript -->
+                        <!-- Data rows will be dynamically generated -->
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Additional Info Section -->
-        <section id="usage">
-            <h2>How to Use This Collection</h2>
+        <section class="contribution">
+            <h2>🤝 Contribution</h2>
             <p>
-                You can filter datasets by typing in the filter boxes below each column header, or use the search box 
-                to search across all fields. Click on column headers to sort the table.
+                We welcome contributions! If you know of a dataset that should be included, please submit an issue or 
+                pull request on our <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a>.
             </p>
-            <p>
-                For each dataset, you can:
-            </p>
-            <ul>
-                <li><strong>View Dataset:</strong> Opens the dataset access link</li>
-                <li><strong>Read Paper:</strong> Opens the related research paper (if available)</li>
-                <li><strong>Details:</strong> Shows additional information about the dataset</li>
-            </ul>
         </section>
 
-        <!-- Contribution Section -->
-        <section id="contribute">
-            <h2>Contribute</h2>
+        <section class="citation">
+            <h2>📚 Citation & Acknowledgment</h2>
             <p>
-                We welcome contributions from the community! If you know of a dataset that should be included, 
-                or if you notice any errors, please visit our 
-                <a href="https://github.com/your-repo-name/Public-Datasets" target="_blank">GitHub repository</a> 
-                and submit an issue or pull request.
+                If you use this resource in your research, please cite our repository and acknowledge the original 
+                dataset authors and publishers. Visit our 
+                <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a> for citation details.
             </p>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 BoneHub Public Datasets. Licensed under CC BY 4.0</p>
             <p>
-                <a href="https://github.com/your-repo-name/Public-Datasets" target="_blank">View on GitHub</a>
+                This is a community-driven resource. For questions or feedback, please visit our 
+                <a href="https://github.com/yourusername/yourrepo" target="_blank">GitHub repository</a>.
+            </p>
+            <p class="disclaimer">
+                <strong>⚠️ Disclaimer:</strong> This repository provides links and information about publicly available datasets. 
+                We do not host or own these datasets. Users must comply with the terms and licenses of each individual dataset.
             </p>
         </div>
     </footer>
 
-    <!-- Modal for dataset details -->
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modalBody"></div>
-        </div>
-    </div>
-
     <script src="data.js"></script>
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 ## Table of Contents
 
-### ✅ [Browse the Complete Dataset Collection](data/README.md)
+### 🌐 [Browse Datasets on Our Website](https://bonehub.github.io/Public-Datasets/)
 ### 📖 [Introduction](#introduction---welcome-to-the-bonehubs-public-datasets)
 ### 🔍 [Usage Instructions](#usage-instructions)
 ### 🤝 [Contribution](#contribution---lets-expand-the-list-of-datasets)
@@ -28,7 +28,22 @@ The complete dataset collection is available in [data/bonehub_public_datasets.cs
 
 ---
 
-### Option 1: AI-Assisted Search (Recommended for Quick Queries) 🤖
+### Interactive Web Interface (Recommended) 🌐
+
+**[Visit our interactive website](https://bonehub.github.io/Public-Datasets/)** to browse and search datasets with an easy-to-use interface.
+
+Features:
+- **Global Search**: Search across all dataset fields
+- **Column Filters**: Filter by specific attributes (every column is filterable!)
+- **Interactive Links**: Direct access to datasets and papers
+- **Responsive Design**: Works on all devices
+- **Always Up-to-date**: Automatically synchronized with our dataset collection
+
+This is the easiest way to explore and find relevant datasets!
+
+---
+
+### Option 2: AI-Assisted Search (Quick Queries) 🤖
 
 If you're not comfortable with manual filtering or want instant results, we've prepared an AI-powered search tool as a **Claude Skill**. This allows you to ask questions in natural language and get filtered results automatically.
 
@@ -64,7 +79,7 @@ The AI assistant will search through the entire dataset collection and provide y
 
 ---
 
-### Option 2: Manual Filtering 🛠️
+### Option 3: Manual Filtering 🛠️
 
 If you prefer to filter datasets yourself, you have two main approaches:
 
