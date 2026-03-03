@@ -54,7 +54,7 @@ def main():
 
     # Define paths
     csv_path = project_root / "data" / "bonehub_public_datasets.csv"
-    output_path = project_root / "docs" / "data.js"
+    output_path = project_root / "webpage" / "data.js"
 
     # Check if CSV file exists
     if not csv_path.exists():
