@@ -59,8 +59,3 @@
 
 - **Multiple Values**: When multiple values are applicable for a column, they are separated by semicolons (`;`).
 - **Empty Fields**: Fields that are not applicable or not specified for a particular dataset are left blank.
-- **3D Bone Shapes Requirement**: Datasets in this registry must include 3D bone shapes (as segmentation masks or surface meshes) AND/OR 3D medical images (CT, MRI) from which 3D bone shapes could be generated.
-
-## Contributing
-
-To suggest a new dataset for inclusion in this registry, please refer to the issue template [here](https://github.com/BoneHub/Public-Datasets/issues/new?template=new-dataset-suggestion.yml).
