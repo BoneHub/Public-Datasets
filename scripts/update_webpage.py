@@ -33,11 +33,11 @@ def generate_data_js(datasets, output_path):
 
     # Create JavaScript content with all CSV columns
     js_content = f"""// Auto-generated from bonehub_public_datasets.csv
-    // Do not edit manually - run scripts/update_webpage.py instead
-    // Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+// Do not edit manually - run scripts/update_webpage.py instead
+// Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-    const datasetsData = {json.dumps(datasets, indent=2, ensure_ascii=False)};
-    """
+const datasetsData = {json.dumps(datasets, indent=2, ensure_ascii=False)};
+"""
 
     # Write to file
     with open(output_path, "w", encoding="utf-8") as f:
