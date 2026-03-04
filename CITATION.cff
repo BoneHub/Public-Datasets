@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it using the metadata from this file."
+title: "A Guide for finding 3D bone shapes & medical image datasets"
+type: dataset
+authors:
+  - family-names: "Alavi"
+    given-names: "S. H."
+    affiliation: "Department of Biomechanical Engineering, University of Twente"
+    email: "hamid.alavi@utwente.nl"
+  - family-names: "Asseln"
+    given-names: "M."
+    affiliation: "Department of Biomechanical Engineering, University of Twente"
+    email: "m.asseln@utwente.nl"
+repository-code: "https://github.com/BoneHub/Public-Datasets"
+url: "https://github.com/BoneHub/Public-Datasets"
+keywords:
+  - "public datasets"
+  - "3D bone shapes"
+  - "medical imaging"
+  - "CT"
+  - "MRI"
+  - "orthopedics"
+  - "biomechanics"
+preferred-citation:
+  type: dataset
+  title: "A Guide for finding 3D bone shapes & medical image datasets"
+  authors:
+    - family-names: "Alavi"
+      given-names: "S. H."
+    - family-names: "Asseln"
+      given-names: "M."
+  year: 2025
+  url: "https://github.com/BoneHub/Public-Datasets"
