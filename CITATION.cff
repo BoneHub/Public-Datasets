@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this repository, please cite it using the metadata from this file."
 title: "A Guide for finding 3D bone shapes & medical image datasets"
-type: dataset
+type: software
 authors:
   - family-names: "Alavi"
     given-names: "S. H."
@@ -22,7 +22,7 @@ keywords:
   - "orthopedics"
   - "biomechanics"
 preferred-citation:
-  type: dataset
+  type: software
   title: "A Guide for finding 3D bone shapes & medical image datasets"
   authors:
     - family-names: "Alavi"
