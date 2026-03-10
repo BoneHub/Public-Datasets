@@ -1,6 +1,6 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-03-03 14:06:11
+// Last updated: 2026-03-09 13:31:27
 
 const datasetsData = [
   {
@@ -425,7 +425,7 @@ const datasetsData = [
   },
   {
     "Dataset Name": "ENHANCE.PET 1.6k",
-    "Access Link": "https://enhance-pet-1-6k.s3.us-west-2.amazonaws.com/ENHANCE-PET-1_6k.zip; or follow the instructions:; https://github.com/ENHANCE-PET/MOOSE/blob/main/DATA_CARD.md",
+    "Access Link": "https://enhance-pet-1-6k.s3.us-west-2.amazonaws.com/ENHANCE-PET-1_6k.zip; https://github.com/ENHANCE-PET/MOOSE/blob/main/DATA_CARD.md",
     "Related Paper": "https://doi.org/10.21203/rs.3.rs-7169062/v2",
     "Country": "Austria",
     "Year": "2025",
