@@ -399,6 +399,35 @@ footer a:hover {
     opacity: 0.9;
 }
 
+/* Visitor Counter */
+#visitor-counter div {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    padding: 0;
+    border: none;
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+}
+
+#visitor-counter #gcvc-for {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    display: inline;
+}
+
+#visitor-counter #gcvc-for::after {
+    content: ':';
+}
+
+#visitor-counter #gcvc-views {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    display: inline;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header h1 {

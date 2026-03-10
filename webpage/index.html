@@ -137,7 +137,7 @@
                 Visit our <a href="https://github.com/BoneHub/Public-Datasets" target="_blank">GitHub repository</a> for
                 more information.
             </p>
-            <div id="visitor-counter" style="text-align: center; margin-top: 1rem;"></div>
+            <div id="visitor-counter" style="text-align: left; margin-top: 1rem;"></div>
         </div>
     </footer>
 
@@ -150,33 +150,7 @@
                 clearInterval(t)
                 window.goatcounter.visit_count({
                     append: '#visitor-counter',
-                    no_branding: true,
-                    style: `
-                        div { 
-                            border: 1px solid #cccccc; 
-                            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-                            color: #495057; 
-                            font-size: 0.8rem;
-                            font-weight: 500;
-                            padding: 0.75rem 1rem;
-                            max-width: 220px;
-                            margin: 0 auto;
-                            border-radius: 6px;
-                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-                        }
-                        #gcvc-for {
-                            font-size: 0.7rem;
-                            color: #6c757d;
-                            text-transform: uppercase;
-                            letter-spacing: 0.5px;
-                            font-weight: 400;
-                        }
-                        #gcvc-views {
-                            font-size: 1.1rem;
-                            font-weight: 600;
-                            color: #2c5282;
-                        }
-                    `
+                    no_branding: true
                 })
             }
         }, 100)
