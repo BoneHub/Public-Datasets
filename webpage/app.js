@@ -373,9 +373,28 @@ function createLinkButtons(linkString) {
     return links.map((link, index) => {
         // Use "Link" for single link, or "Link 1", "Link 2", etc. for multiple
         const buttonText = links.length === 1 ? 'Link' : `Link ${index + 1}`;
+        const trackedLink = addBonehubReferral(link);
         
-        return `<a href="${link}" target="_blank" rel="noopener noreferrer" class="btn-link">${buttonText}</a>`;
+        return `<a href="${trackedLink}" target="_blank" rel="noopener noreferrer" class="btn-link">${buttonText}</a>`;
     }).join(' ');
+}
+
+// Add BoneHub referral marker to outgoing website URLs.
+function addBonehubReferral(link) {
+    try {
+        const url = new URL(link);
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+            // Preserve existing params and only add the marker if it is missing.
+            if (!url.searchParams.has('utm_source')) {
+                url.searchParams.set('utm_source', 'bonehub');
+            }
+            return url.toString();
+        }
+    } catch (error) {
+        // Keep original value for non-URL strings.
+    }
+
+    return link;
 }
 
 // Update statistics
