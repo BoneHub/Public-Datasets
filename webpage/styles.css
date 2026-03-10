@@ -399,37 +399,6 @@ footer a:hover {
     opacity: 0.9;
 }
 
-/* Visitor Counter */
-#visitor-counter div {
-    background: transparent !important;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.75rem;
-    padding: 0 !important;
-    border: none !important;
-    display: inline-flex !important;
-    align-items: baseline;
-    gap: 0.25rem;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-}
-
-#visitor-counter #gcvc-for {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.75rem;
-    display: inline;
-}
-
-#visitor-counter #gcvc-for::after {
-    content: ':';
-}
-
-#visitor-counter #gcvc-views {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 400;
-    display: inline;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     header h1 {
