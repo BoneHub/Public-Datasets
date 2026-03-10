@@ -42,7 +42,6 @@ Features:
 - **Global Search**: Search across all dataset fields
 - **Column Filters**: Filter by specific attributes (every column is filterable!)
 - **Interactive Links**: Direct access to datasets and papers
-- **Responsive Design**: Works on all devices
 - **Always Up-to-date**: Automatically synchronized with our dataset collection
 
 This is the easiest way to explore and find relevant datasets!
