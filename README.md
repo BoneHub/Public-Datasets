@@ -200,7 +200,7 @@ If you have found this resource useful for your work, we kindly request that you
    
 ## Disclaimer
 
-This repository **does not host** any datasets. It only provides links and metadata to publicly available datasets. Users are responsible for reviewing and complying with each dataset's licensing terms, restrictions, and usage agreements as provided by the original source.
+This repository **does not host** any datasets. It only provides information and links to publicly available datasets. Users are responsible for reviewing and complying with each dataset's licensing terms, restrictions, and usage agreements as provided by the original source.
 
 ## Contact
 
