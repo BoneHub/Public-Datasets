@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,4 +32,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add data/bonehub_public_datasets.csv
           git commit -m "Add dataset from issue #${{ github.event.issue.number }}"
-          git push origin dev
+          git push
