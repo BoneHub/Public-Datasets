@@ -3,19 +3,21 @@ name: Update Webpage
 on:
   # Allow manual trigger
   workflow_dispatch:
-  
-  # Trigger on push to main branch that modifies the CSV file
-  push:
+
+  # Trigger only after sorting workflow finishes
+  workflow_run:
+    workflows: ["Sort Datasets"]
     branches:
       - main
-    paths:
-      - 'data/bonehub_public_datasets.csv'
+    types:
+      - completed
 
 permissions:
   contents: write
 
 jobs:
   update-webpage:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     
     steps:

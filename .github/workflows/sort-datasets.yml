@@ -1,0 +1,47 @@
+name: Sort Datasets
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/bonehub_public_datasets.csv'
+      - 'scripts/sort_datasets.py'
+
+permissions:
+  contents: write
+
+jobs:
+  sort-datasets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run sort script
+        run: |
+          pip install pandas
+          python scripts/sort_datasets.py
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code data/bonehub_public_datasets.csv || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push sorted CSV
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/bonehub_public_datasets.csv
+          git commit -m "Sort datasets CSV [automated]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
