@@ -22,7 +22,6 @@ def parse_issue_form(body: str) -> dict:
     }
     """
     fields = {}
-    fields["BoneHub ID"] = -1  # Add empty BoneHub ID field for new entries
 
     # Split on headings (### Heading)
     sections = re.split(r"\n### ", body)
@@ -97,13 +96,29 @@ def validate_row_keys_against_csv(row: dict, csv_path: Path) -> list:
     return headers
 
 
+def assign_bonehub_id_if_present(row: dict, csv_path: Path) -> dict:
+    """Assign the next BoneHub ID when that column exists in the CSV header."""
+    if not csv_path.exists():
+        return row
+
+    with csv_path.open("r", newline="", encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter=",")
+        headers = next(reader, None)
+        if headers and "BoneHub ID" in headers:
+            row["BoneHub ID"] = str(sum(1 for _ in reader) + 1)
+
+    return row
+
+
 if __name__ == "__main__":
     issue_body = sys.argv[1]
     issue_title = sys.argv[2]
+    csv_path = Path("data/bonehub_public_datasets.csv")
+
     row = parse_issue_form(issue_body)
     yaml_path = Path(".github/ISSUE_TEMPLATE/new-dataset-suggestion.yml")
     row = normalize_values(row, yaml_path)
-    csv_path = Path("data/bonehub_public_datasets.csv")
+    row = assign_bonehub_id_if_present(row, csv_path)
 
     # Ensure data folder exists
     csv_path.parent.mkdir(parents=True, exist_ok=True)
@@ -111,7 +126,7 @@ if __name__ == "__main__":
     # Only append when row keys match existing CSV columns exactly.
     csv_headers = validate_row_keys_against_csv(row, csv_path)
     if not csv_headers:
-        print("failed")
+        print("Failed. Row keys do not match CSV headers or CSV file is missing/empty.")
         sys.exit(1)
 
     ordered_row = {column: row[column] for column in csv_headers}
