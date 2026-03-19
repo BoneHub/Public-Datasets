@@ -22,6 +22,7 @@ def parse_issue_form(body: str) -> dict:
     }
     """
     fields = {}
+    fields["BoneHub ID"] = -1  # Add empty BoneHub ID field for new entries
 
     # Split on headings (### Heading)
     sections = re.split(r"\n### ", body)
@@ -49,7 +50,7 @@ def parse_issue_form(body: str) -> dict:
     return fields
 
 
-def normalize_values(row, template_path) -> str:
+def normalize_values(row, template_path) -> dict:
     def comma2semicolon(value: str) -> str:
         parts = [v.strip() for v in value.split(",") if v.strip()]
         return ";".join(parts)
@@ -78,6 +79,24 @@ def normalize_values(row, template_path) -> str:
     return row
 
 
+def validate_row_keys_against_csv(row: dict, csv_path: Path) -> list:
+    """Return CSV headers when keys match exactly, otherwise return an empty list."""
+    if not csv_path.exists():
+        return []
+
+    with csv_path.open("r", newline="", encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter=",")
+        headers = next(reader, None)
+
+    if not headers:
+        return []
+
+    if set(row.keys()) != set(headers):
+        return []
+
+    return headers
+
+
 if __name__ == "__main__":
     issue_body = sys.argv[1]
     issue_title = sys.argv[2]
@@ -89,14 +108,16 @@ if __name__ == "__main__":
     # Ensure data folder exists
     csv_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Ensure CSV exists with header
-    if not csv_path.exists():
-        with csv_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=row.keys(), delimiter=",")
-            writer.writeheader()
+    # Only append when row keys match existing CSV columns exactly.
+    csv_headers = validate_row_keys_against_csv(row, csv_path)
+    if not csv_headers:
+        print("failed")
+        sys.exit(1)
+
+    ordered_row = {column: row[column] for column in csv_headers}
 
     with csv_path.open("a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=row.keys(), delimiter=",")
-        writer.writerow(row)
+        writer = csv.DictWriter(f, fieldnames=csv_headers, delimiter=",")
+        writer.writerow(ordered_row)
 
     print("Dataset added successfully.")
