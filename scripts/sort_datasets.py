@@ -29,6 +29,14 @@ def is_open_access(value) -> int:
     return int("open access" in str(value).strip().lower())
 
 
+def subject_count(value) -> int:
+    """Return the numeric number of subjects when present, otherwise 0."""
+    try:
+        return int(str(value).strip())
+    except ValueError:
+        return 0
+
+
 def sort_datasets(dataframe: pd.DataFrame) -> pd.DataFrame:
     """Sort datasets by the predefined ranking rules."""
     sort_keys = dataframe.assign(
@@ -36,6 +44,7 @@ def sort_datasets(dataframe: pd.DataFrame) -> pd.DataFrame:
         _mesh_model_available=dataframe["Mesh Model"].apply(has_available_value),
         _segmentation_mask_available=dataframe["Voxel Segmentation Mask"].apply(has_available_value),
         _secondary_imaged_regions_count=dataframe["Secondary Imaged Regions"].apply(count_semicolon_separated_values),
+        _subject_count=dataframe["Number of Subjects"].apply(subject_count),
         _metadata_count=dataframe["Available Information per Subject"].apply(count_semicolon_separated_values),
         _open_access_available=dataframe["Access Policy"].apply(is_open_access),
     )
@@ -46,11 +55,11 @@ def sort_datasets(dataframe: pd.DataFrame) -> pd.DataFrame:
             "_mesh_model_available",
             "_segmentation_mask_available",
             "_secondary_imaged_regions_count",
+            "_subject_count",
             "_metadata_count",
             "_open_access_available",
-            "Dataset Name",
         ],
-        ascending=[False, False, False, False, False, False, True],
+        ascending=[False, False, False, False, False, False, False],
         kind="mergesort",
     )
 
