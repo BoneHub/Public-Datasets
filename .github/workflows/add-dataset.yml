@@ -5,7 +5,7 @@ on:
     types: [closed]
 
 permissions:
-  contents: write  # needed to push changes
+  contents: write
 
 jobs:
   add-dataset:
@@ -27,15 +27,17 @@ jobs:
           pip install pyyaml
           python scripts/add_dataset.py "${{ github.event.issue.body }}" "${{ github.event.issue.title }}"
 
-      - name: Commit and push changes
+      - name: Check for changes
+        id: git-check
         if: steps.add_dataset.outcome == 'success'
+        run: |
+          git diff --exit-code data/bonehub_public_datasets.csv || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.git-check.outputs.changed == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add data/bonehub_public_datasets.csv
-          if git diff --cached --quiet; then
-            echo "No CSV changes to commit."
-            exit 0
-          fi
           git commit -m "Add dataset from issue #${{ github.event.issue.number }}"
           git push

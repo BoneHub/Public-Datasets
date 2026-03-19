@@ -46,5 +46,3 @@ jobs:
           git add webpage/data.js
           git commit -m "Update webpage data from CSV [automated]"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
