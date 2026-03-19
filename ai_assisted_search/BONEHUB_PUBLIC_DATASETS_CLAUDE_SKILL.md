@@ -45,6 +45,8 @@ print(f"Columns: {list(df.columns)}")
 
 **Note:** The file path is `/mnt/data/bonehub_public_datasets.csv` for files uploaded to Claude.
 
+`BoneHub ID` is the first column in the CSV and is the unique internal identifier for each dataset. Use it whenever the user asks for a dataset ID or when returning results that should be easy to reference unambiguously.
+
 ---
 
 ## Keyword Synonyms — Translate User Terms to CSV Terms
@@ -297,7 +299,7 @@ Always include these **base columns** in the output, plus any columns the user s
 
 ```python
 # Base columns always shown
-base_cols = ['Dataset Name', 'Access Link', 'Related Paper']
+base_cols = ['BoneHub ID', 'Dataset Name', 'Access Link', 'Related Paper']
 
 # Add columns relevant to the user's query — examples:
 query_cols = ['Country', 'Year', 'Primary Imaged Regions', 'Imaging Modality']  # adjust per request
@@ -327,10 +329,17 @@ columns_to_show = base_cols + ['Available 3D Bone Shapes', 'Voxel Segmentation M
 columns_to_show = base_cols + ['Number of Subjects', 'Available Information per Subject', 'Subjects Vital Status', 'Subjects Clinical Condition']
 ```
 
+If the user asks for a specific BoneHub entry, filter by exact ID:
+
+```python
+result = df[df['BoneHub ID'] == 109]
+```
+
 ---
 
 ## CSV Columns Reference
 
+- `BoneHub ID`: Unique BoneHub identifier for the dataset
 - `Dataset Name`: Name of the dataset
 - `Access Link`: URL to access the dataset
 - `Related Paper`: Associated publication
@@ -341,7 +350,7 @@ columns_to_show = base_cols + ['Number of Subjects', 'Available Information per 
 - `Medical Images Included`: Whether medical images are included
 - `Imaging Modality`: CT, MRI, X-ray, etc. (can be multiple, separated by `;`)
 - `Image Source`: Original or Adopted
-- `Images Source Details`: Additional source information
+- `Image Source Details`: Additional source information
 - `Primary Imaged Regions`: **Semicolon-separated** list (e.g., `Pelvis; Hip; Upper Leg`)
 - `Secondary Imaged Regions`: **Semicolon-separated** list
 - `Available 3D Bone Shapes`: **Semicolon-separated** list (e.g., `Femur; Tibia; Fibula`)
@@ -392,6 +401,9 @@ df[df['Imaging Modality'].str.contains('MRI', case=False, na=False)]
 ```python
 # USA datasets
 df[df['Country'] == 'USA']
+
+# Dataset with a known BoneHub ID
+df[df['BoneHub ID'] == 109]
 
 # Recent datasets (2023 or later)
 df[df['Year'] >= 2023]

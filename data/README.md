@@ -6,6 +6,7 @@
 
 | Column | Description |
 |--------|-------------|
+| **BoneHub ID** | The unique BoneHub identifier for the dataset entry. This can be used as a stable reference for a dataset within the BoneHub catalog. |
 | **Dataset Name** | The name of the dataset. |
 | **Access Link** | URL(s) where the dataset can be accessed. Multiple links are separated by semicolons (`;`). |
 | **Related Paper** | Link to the paper(s) describing the dataset, if available (e.g., DOI link). |
