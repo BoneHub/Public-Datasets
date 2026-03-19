@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize columns
     if (allData.length > 0) {
         allColumns = Object.keys(allData[0]);
-        // Show all columns by default
-        visibleColumns = new Set(allColumns);
+        // Show all columns by default, except 'BoneHub ID'
+        visibleColumns = new Set(allColumns.filter(col => col !== 'BoneHub ID'));
     }
     
     initializeTable();
