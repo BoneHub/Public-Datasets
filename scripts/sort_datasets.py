@@ -70,7 +70,7 @@ def main():
     """Read, sort, and overwrite the datasets CSV."""
     csv_path = Path("data/bonehub_public_datasets.csv")
 
-    dataframe = pd.read_csv(csv_path)
+    dataframe = pd.read_csv(csv_path, dtype_backend="numpy_nullable")
     sorted_dataframe = sort_datasets(dataframe)
     sorted_dataframe.to_csv(csv_path, index=False)
 
