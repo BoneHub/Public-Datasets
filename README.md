@@ -192,7 +192,7 @@ If you have found this resource useful for your work, we kindly request that you
   ```
    @software{AlaviAsseln2025BoneHubPublicDatasets,
       author = {Alavi, S. H. and Asseln, M.},
-      title = {A Guide for finding 3D bone shapes & medical image datasets},
+      title = {A Guide for finding 3D bone shapes and medical image datasets},
       year = {2025},
       url = {https://github.com/BoneHub/Public-Datasets}
   }
