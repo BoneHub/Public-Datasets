@@ -184,9 +184,10 @@ We welcome contributions from the community to expand the list of datasets. You 
 
 If you have found this resource useful for your work, we kindly request that you cite us. Your acknowledgment helps support the continued development and maintenance of this resource.
 
-- Cite our paper
-  
-  (paper doi pending)
+- Cite our [paper](https://doi.org/10.1016/j.jbiomech.2026.113288)
+   ```
+  Alavi, S. H., Tuijthof, G. J., Verdonschot, N. J., & Asseln, M. (2026). Datasets for acquiring 3D bone shapes: a systematic review. Journal of Biomechanics, 113288. https://doi.org/10.1016/j.jbiomech.2026.113288
+  ```
 
 - Cite this repository (BibTeX)
   ```
