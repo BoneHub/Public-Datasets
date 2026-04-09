@@ -1,6 +1,6 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-03-25 22:24:07
+// Last updated: 2026-04-09 09:37:11
 
 const datasetsData = [
   {
@@ -813,7 +813,7 @@ const datasetsData = [
     "BoneHub ID": "106",
     "Dataset Name": "PENGWIN",
     "Access Link": "https://doi.org/10.5281/zenodo.10927451; https://pengwin.grand-challenge.org/",
-    "Related Paper": "https://doi.org/10.48550/arXiv.2504.02382",
+    "Related Paper": "https://doi.org/10.1109/TMI.2025.3650126; https://doi.org/10.48550/arXiv.2504.02382",
     "Country": "China",
     "Year": "2024",
     "Size": "7.6",
