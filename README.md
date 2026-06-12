@@ -1,11 +1,14 @@
 <div align="center">
 
-### ✨[**Datasets Browser**](https://bonehub.github.io/Public-Datasets/)✨
+<p style="font-size:x-large;">
+  ✨ <a href="https://bonehub.github.io/Public-Datasets/">Dataset Browser</a> ✨
+</p>
 
-👆 **Click above to explore  the datasets** 👆
+<p>👆 Click above to browse the datasets 👆</p>
 
-<img src="./webpage/logo-with-text.png" width="50%" />
+<img src="./webpage/logo-with-text.png" width="30%" />
 
+<br>
 <br>
 
 <a href="https://bonehub.github.io/Public-Datasets/"><img alt="Public-Datasets" src="https://img.shields.io/badge/Webpage-Live-green"></a>
