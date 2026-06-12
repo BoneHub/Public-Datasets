@@ -1,10 +1,11 @@
 <div align="center">
 
-<p style="font-size:x-large;">
+<h2>
   ✨ <a href="https://bonehub.github.io/Public-Datasets/">Dataset Browser</a> ✨
-</p>
+</h2>
 
 <p>👆 Click above to browse the datasets 👆</p>
+
 
 <img src="./webpage/logo-with-text.png" width="30%" />
 
