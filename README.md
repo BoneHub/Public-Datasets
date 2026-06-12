@@ -1,22 +1,19 @@
 <div align="center">
 
-### ✨[**Browse Datasets on Our Interactive Webpage**](https://bonehub.github.io/Public-Datasets/)✨
+### ✨[**Datasets Browser**](https://bonehub.github.io/Public-Datasets/)✨
 
-👆 **Click above to explore our easy-to-use dataset browser** 👆
+👆 **Click above to explore  the datasets** 👆
 
-##
+<img src="./webpage/logo-with-text.png" width="50%" />
 
-<p align="center">
-    <img src="./webpage/logo-with-text.png" width="50%" />
-</p>
+<br>
 
-<p align="center">
-    <a href="https://bonehub.github.io/Public-Datasets/"><img alt="Public-Datasets" src="https://img.shields.io/badge/Webpage-Live-green"></a>
-    <a href="https://doi.org/10.1016/j.jbiomech.2026.113288">
-        <img alt="DOI" src="https://img.shields.io/badge/DOI-10.1016/j.jbiomech.2026.113288-blue">
-    </a>
+<a href="https://bonehub.github.io/Public-Datasets/"><img alt="Public-Datasets" src="https://img.shields.io/badge/Webpage-Live-green"></a>
+<a href="https://doi.org/10.1016/j.jbiomech.2026.113288">
+   <img alt="DOI" src="https://img.shields.io/badge/DOI-10.1016/j.jbiomech.2026.113288-blue">
+</a>
     
-</p>
+
 
 </div>
 
