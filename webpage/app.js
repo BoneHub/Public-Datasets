@@ -386,7 +386,7 @@ function addBonehubReferral(link) {
         if (url.protocol === 'http:' || url.protocol === 'https:') {
             // Preserve existing params and only add the marker if it is missing.
             if (!url.searchParams.has('utm_source')) {
-                url.searchParams.set('utm_source', 'bonehub');
+                url.searchParams.set('utm_source', 'bonehub.eu');
             }
             return url.toString();
         }
