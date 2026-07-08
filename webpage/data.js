@@ -1,6 +1,6 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-04-09 09:37:11
+// Last updated: 2026-07-08 10:12:39
 
 const datasetsData = [
   {
@@ -431,7 +431,7 @@ const datasetsData = [
     "Available Information per Subject": "",
     "Subjects Vital Status": "",
     "Subjects Clinical Condition": "",
-    "Access Policy": "Restricted",
+    "Access Policy": "Open Access",
     "Data Redistribution Policy": "Allowed",
     "Research Use Policy": "Allowed",
     "Commercial Use Policy": "Allowed",
