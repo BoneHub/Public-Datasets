@@ -83,6 +83,7 @@ function initializeTable() {
     
     applyColumnVisibility();
     updateSortIndicators();
+    updateStickyColumnWidths();
 }
 
 function handleSort(column) {
@@ -223,6 +224,9 @@ function applyColumnVisibility() {
             });
         });
     }
+    
+    // Recalculate sticky column widths when visibility changes
+    updateStickyColumnWidths();
 }
 
 // Handle column-specific filtering
@@ -360,6 +364,30 @@ function updateDisplay() {
     applyColumnVisibility();
     updateSortIndicators();
     updateStats();
+    updateStickyColumnWidths();
+}
+
+// Update CSS variables for sticky column positioning
+function updateStickyColumnWidths() {
+    const table = document.getElementById('datasetsTable');
+    const headerRow = document.getElementById('tableHeader');
+    
+    if (!table || !headerRow || headerRow.children.length === 0) return;
+    
+    try {
+        // Get the width of first two columns to calculate sticky positions
+        const col1 = headerRow.children[0];
+        const col2 = headerRow.children[1];
+        
+        const col1Width = col1 ? col1.offsetWidth : 0;
+        const col2Width = col2 ? col2.offsetWidth : 0;
+        
+        // Set CSS variables for sticky positioning
+        table.style.setProperty('--col1-width', `${col1Width}px`);
+        table.style.setProperty('--col2-width', `${col2Width}px`);
+    } catch (error) {
+        console.log('Column width calculation skipped', error);
+    }
 }
 
 // Create link buttons
@@ -442,6 +470,11 @@ function setupEventListeners() {
     const exportButton = document.getElementById('exportCSV');
     exportButton.addEventListener('click', function() {
         exportToCSV();
+    });
+    
+    // Handle window resize to update sticky column widths
+    window.addEventListener('resize', function() {
+        updateStickyColumnWidths();
     });
 }
 
