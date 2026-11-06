@@ -1,17 +1,17 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-06 09:28:34
+// Last updated: 2026-11-06 10:29:29
 
 const datasetsData = [
   {
     "BoneHub ID": "134",
     "Dataset Name": "ENHANCE.PET 1.6k",
-    "Access Link": "https://enhance-pet-1-6k.s3.us-west-2.amazonaws.com/ENHANCE-PET-1_6k.zip; https://github.com/ENHANCE-PET/MOOSE/blob/main/DATA_CARD.md",
-    "Related Paper": "https://doi.org/10.21203/rs.3.rs-7169062/v2",
+    "Access Link": "https://github.com/ENHANCE-PET/MOOSE/blob/main/DATA_CARD.md; https://doi.org/10.57760/sciencedb.34150",
+    "Related Paper": "https://doi.org/10.1038/s41597-026-07218-y",
     "Country": "Austria",
     "Year": "2025",
     "Size": "243",
-    "Remarks": "",
+    "Remarks": "older version (1597 subjects) paper: https://doi.org/10.21203/rs.3.rs-7169062/v2; and download link: https://enhance-pet-1-6k.s3.us-west-2.amazonaws.com/ENHANCE-PET-1_6k.zip",
     "Medical Images Included": "Yes",
     "Imaging Modality": "CT; PET",
     "Image Source": "Original; Adopted",
@@ -24,7 +24,7 @@ const datasetsData = [
     "Voxel Segmentation Mask": "Available",
     "Mesh Model": "",
     "CAD Model": "",
-    "Number of Subjects": "1597",
+    "Number of Subjects": "1683",
     "Available Information per Subject": "Age; Gender; Weight; Height; Clinical Condition",
     "Subjects Vital Status": "",
     "Subjects Clinical Condition": "healthy; pathological; Lung Cancer; Lymphoma; Melanoma",
