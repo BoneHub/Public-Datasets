@@ -1,6 +1,6 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-05 20:52:18
+// Last updated: 2026-11-06 09:28:34
 
 const datasetsData = [
   {
@@ -38,7 +38,7 @@ const datasetsData = [
     "BoneHub ID": "29",
     "Dataset Name": "Healthy-Total-Body-CTs",
     "Access Link": "https://doi.org/10.7937/NC7Z-4F76",
-    "Related Paper": "",
+    "Related Paper": "https://doi.org/10.2967/jnumed.122.264063",
     "Country": "USA",
     "Year": "2024",
     "Size": "59.03",
