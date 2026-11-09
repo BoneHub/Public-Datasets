@@ -1,8 +1,39 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-06 10:29:29
+// Last updated: 2026-11-09 14:19:35
 
 const datasetsData = [
+  {
+    "BoneHub ID": "153",
+    "Dataset Name": "Visible Human 3D Models",
+    "Access Link": "https://doi.org/10.57967/hf/10464",
+    "Related Paper": "",
+    "Country": "Netherlands",
+    "Year": "2026",
+    "Size": "5.3",
+    "Remarks": "",
+    "Medical Images Included": "Yes",
+    "Imaging Modality": "CT",
+    "Image Source": "Adopted",
+    "Image Source Details": "https://digitalcommons.du.edu/visiblehuman/",
+    "Primary Imaged Regions": "Whole Body; Neurocranium; Viscerocranium; Cervical Spine; Thoracic Spine; Lumbar Spine; Thoracic Cage; Abdomen; Pelvis; Shoulder; Upper Arm; Forearm; Wrist; Hand; Hip; Upper Leg; Knee; Lower Leg; Ankle; Foot",
+    "Secondary Imaged Regions": "Whole Body; Neurocranium; Viscerocranium; Cervical Spine; Thoracic Spine; Lumbar Spine; Thoracic Cage; Abdomen; Shoulder; Upper Arm; Pelvis; Forearm; Wrist; Hand; Hip; Upper Leg; Knee; Lower Leg; Ankle; Foot",
+    "Available 3D Bone Shapes": "Cranial Bones; Facial Bones; Cervical Vertebrae; Thoracic Vertebrae; Lumbar Vertebrae; Coccyx; Sacrum; Ribs; Sternum; Clavicle; Scapula; Humerus; Radius; Ulna; Carpals; Metacarpals; Phalanges Hand; Hip Bones; Proximal Femur; Femur; Distal Femur; Patella; Proximal Tibia; Tibia; Distal Tibia; Proximal Fibula; Fibula; Distal Fibula; Tarsals; Metatarsals; Phalanges Foot",
+    "Additional Structures": "",
+    "Landmarks": "",
+    "Voxel Segmentation Mask": "Available",
+    "Mesh Model": "Available",
+    "CAD Model": "Available",
+    "Number of Subjects": "2",
+    "Available Information per Subject": "Age; Gender; Height; Weight; BMI",
+    "Subjects Vital Status": "Postmortem",
+    "Subjects Clinical Condition": "",
+    "Access Policy": "Open Access",
+    "Data Redistribution Policy": "Allowed",
+    "Research Use Policy": "Allowed",
+    "Commercial Use Policy": "Allowed",
+    "License": "CC BY 4.0"
+  },
   {
     "BoneHub ID": "134",
     "Dataset Name": "ENHANCE.PET 1.6k",
