@@ -27,7 +27,7 @@ body:
   - type: input
     id: dataset_name
     attributes:
-      label: Dataset name
+      label: Dataset Name
       description: "The name of the dataset."
       placeholder: "e.g., 'Lung CT Scans Dataset'"
     validations:
@@ -36,7 +36,7 @@ body:
   - type: input
     id: access_link
     attributes:
-      label: Access link
+      label: Access Link
       description: "URL(s) where the dataset can be accessed."
       placeholder: "https://dataset.com; https://another-link.com"
     validations:
@@ -162,7 +162,7 @@ body:
   - type: dropdown
     id: images_source
     attributes:
-      label: Images Source
+      label: Image Source
       description: |
         Select the source of the medical images. Choose all that apply.
 
@@ -184,7 +184,7 @@ body:
   - type: input
     id: images_source_details
     attributes:
-      label: Images Source Details
+      label: Image Source Details
       description: "If adopted images are used, please provide links to the original dataset(s)."
       placeholder: "https://dataset.com; https://another-link.com"
     validations:
@@ -207,17 +207,18 @@ body:
 
       multiple: true
       options:
-        - whole Body
+        - Whole Body
         - Neurocranium
         - Viscerocranium
         - Cervical Spine
         - Thoracic Spine
         - Lumbar Spine
-        - Thoratic Cage
+        - Thoracic Cage
         - Abdomen
         - Pelvis
         - Shoulder
         - Upper Arm
+        - Elbow
         - Forearm
         - Wrist
         - Hand
@@ -246,17 +247,18 @@ body:
 
       multiple: true
       options:
-        - whole Body
+        - Whole Body
         - Neurocranium
         - Viscerocranium
         - Cervical Spine
         - Thoracic Spine
         - Lumbar Spine
-        - Thoratic Cage
+        - Thoracic Cage
         - Abdomen
         - Pelvis
         - Shoulder
         - Upper Arm
+        - Elbow
         - Forearm
         - Wrist
         - Hand

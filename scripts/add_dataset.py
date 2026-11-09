@@ -16,8 +16,8 @@ def parse_issue_form(body: str) -> dict:
     """
     Parses GitHub Issue Form markdown into a dict:
     {
-      "Dataset name": "value",
-      "Access link": "value",
+      "Dataset Name": "value",
+      "Access Link": "value",
       ...
     }
     """
@@ -78,22 +78,12 @@ def normalize_values(row, template_path) -> dict:
     return row
 
 
-def validate_row_keys_against_csv(row: dict, csv_path: Path) -> list:
-    """Return CSV headers when keys match exactly, otherwise return an empty list."""
+def read_csv_headers(csv_path: Path) -> list:
+    """Return the CSV header row, or an empty list when the file is missing or empty."""
     if not csv_path.exists():
         return []
-
     with csv_path.open("r", newline="", encoding="utf-8") as f:
-        reader = csv.reader(f, delimiter=",")
-        headers = next(reader, None)
-
-    if not headers:
-        return []
-
-    if set(row.keys()) != set(headers):
-        return []
-
-    return headers
+        return next(csv.reader(f, delimiter=","), None) or []
 
 
 def assign_bonehub_id_if_present(row: dict, csv_path: Path) -> dict:
@@ -114,19 +104,26 @@ if __name__ == "__main__":
     issue_body = sys.argv[1]
     issue_title = sys.argv[2]
     csv_path = Path("data/bonehub_public_datasets.csv")
+    yaml_path = Path(".github/ISSUE_TEMPLATE/new-dataset-suggestion.yml")
+
+    csv_headers = read_csv_headers(csv_path)
+    if not csv_headers:
+        print(f"Failed. CSV file {csv_path} is missing or empty.")
+        sys.exit(1)
 
     row = parse_issue_form(issue_body)
-    yaml_path = Path(".github/ISSUE_TEMPLATE/new-dataset-suggestion.yml")
     row = normalize_values(row, yaml_path)
     row = assign_bonehub_id_if_present(row, csv_path)
 
-    # Ensure data folder exists
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # Only append when row keys match existing CSV columns exactly.
-    csv_headers = validate_row_keys_against_csv(row, csv_path)
-    if not csv_headers:
-        print("Failed. Row keys do not match CSV headers or CSV file is missing/empty.")
+    # Only append when the issue fields match the CSV columns exactly.
+    missing = [h for h in csv_headers if h not in row]
+    unexpected = [k for k in row if k not in csv_headers]
+    if missing or unexpected:
+        print("Failed. Issue fields do not match CSV headers.")
+        if missing:
+            print(f"  CSV columns missing from the issue: {missing}")
+        if unexpected:
+            print(f"  Issue fields with no matching CSV column: {unexpected}")
         sys.exit(1)
 
     ordered_row = {column: row[column] for column in csv_headers}

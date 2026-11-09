@@ -23,9 +23,13 @@ jobs:
 
       - name: Parse issue and append to CSV
         id: add_dataset
+        # Pass issue text via env vars, not inline ${{ }}, so quotes/backticks/$ in it can't break or inject shell
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
           pip install pyyaml
-          python scripts/add_dataset.py "${{ github.event.issue.body }}" "${{ github.event.issue.title }}"
+          python scripts/add_dataset.py "$ISSUE_BODY" "$ISSUE_TITLE"
 
       - name: Check for changes
         id: git-check
