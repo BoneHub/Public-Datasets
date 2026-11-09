@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  actions: write  # needed to dispatch the Sort Datasets workflow
 
 jobs:
   add-dataset:
@@ -45,3 +46,11 @@ jobs:
           git add data/bonehub_public_datasets.csv
           git commit -m "Add dataset from issue #${{ github.event.issue.number }}"
           git push
+
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the
+      # Sort -> Update Webpage -> Deploy chain explicitly (workflow_dispatch is allowed).
+      - name: Trigger Sort Datasets workflow
+        if: steps.git-check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sort-datasets.yml --ref main
