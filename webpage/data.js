@@ -1,6 +1,6 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-09 14:19:35
+// Last updated: 2026-11-12 14:01:51
 
 const datasetsData = [
   {
@@ -130,11 +130,11 @@ const datasetsData = [
   {
     "BoneHub ID": "27",
     "Dataset Name": "TotalSegmentator CT",
-    "Access Link": "https://doi.org/10.5281/zenodo.6802613; https://github.com/wasserth/TotalSegmentator",
+    "Access Link": "https://doi.org/10.5281/zenodo.6802613",
     "Related Paper": "https://doi.org/10.1148/ryai.230024",
     "Country": "Switzerland",
-    "Year": "2023",
-    "Size": "23.6",
+    "Year": "2026",
+    "Size": "37.4",
     "Remarks": "",
     "Medical Images Included": "Yes",
     "Imaging Modality": "CT",
@@ -148,8 +148,8 @@ const datasetsData = [
     "Voxel Segmentation Mask": "Available",
     "Mesh Model": "",
     "CAD Model": "",
-    "Number of Subjects": "1228",
-    "Available Information per Subject": "",
+    "Number of Subjects": "1939",
+    "Available Information per Subject": "Age; Gender",
     "Subjects Vital Status": "",
     "Subjects Clinical Condition": "healthy; pathological",
     "Access Policy": "Open Access",
@@ -316,11 +316,11 @@ const datasetsData = [
   {
     "BoneHub ID": "28",
     "Dataset Name": "TotalSegmentator MRI",
-    "Access Link": "https://doi.org/10.5281/zenodo.11367004; https://github.com/wasserth/TotalSegmentator",
+    "Access Link": "https://doi.org/10.5281/zenodo.11367004",
     "Related Paper": "https://doi.org/10.48550/arXiv.2405.19492; https://doi.org/10.1148/radiol.241613",
     "Country": "Switzerland",
-    "Year": "2025",
-    "Size": "5.1",
+    "Year": "2026",
+    "Size": "15.2",
     "Remarks": "",
     "Medical Images Included": "Yes",
     "Imaging Modality": "MRI",
@@ -334,8 +334,8 @@ const datasetsData = [
     "Voxel Segmentation Mask": "Available",
     "Mesh Model": "",
     "CAD Model": "",
-    "Number of Subjects": "616",
-    "Available Information per Subject": "",
+    "Number of Subjects": "1296",
+    "Available Information per Subject": "Age; Gender",
     "Subjects Vital Status": "",
     "Subjects Clinical Condition": "",
     "Access Policy": "Open Access",
