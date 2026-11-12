@@ -55,8 +55,11 @@ The complete dataset collection is available in [data/bonehub_public_datasets.cs
 
 Features:
 - **Global Search**: Search across all dataset fields
-- **Column Filters**: Filter by specific attributes (every column is filterable!)
+- **Filters with live counts**: Narrow down by data included (images, segmentations, meshes, CAD, landmarks), imaging modality, body region, 3D bone shapes, number of subjects, year, size, usage rights, license, and more
+- **Card or table view**: Scan short dataset summaries, then open any dataset to see all of its details
+- **Shareable links**: The URL keeps your filters, so you can bookmark or share a filtered view or a single dataset
 - **Interactive Links**: Direct access to datasets and papers
+- **CSV Export**: Download the filtered datasets with all columns
 - **Always Up-to-date**: Automatically synchronized with our dataset collection
 
 This is the easiest way to explore and find relevant datasets!

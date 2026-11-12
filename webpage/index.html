@@ -48,47 +48,98 @@
             </p>
         </section>
 
-        <section class="search-section">
+        <section class="browse" id="browse">
             <h2>🔍 Browse Datasets</h2>
-            <div class="search-controls">
-                <input type="text" id="searchInput" placeholder="Search datasets..." aria-label="Search datasets">
-                <button id="clearFilters" class="btn-secondary">Clear Filters</button>
-                <button id="toggleColumns" class="btn-secondary">Show/Hide Columns</button>
-                <button id="exportCSV" class="btn-export">📥 Export to CSV</button>
-            </div>
-            <div class="stats">
-                <span id="datasetCount">Loading datasets...</span>
-                <span class="filter-hint" style="float: right; font-style: italic; color: #666; font-size: 0.85rem;">
-                    <p style="font-size: 0.9rem; color: #555; margin-top: 0.5rem; margin-bottom: 1rem;">
-                        ℹ️ Not sure what each column means? Check this
-                        <a href="https://github.com/BoneHub/Public-Datasets/blob/main/data/README.md" target="_blank"
-                            rel="noopener noreferrer">guide</a>.
-                    </p>
-                    <p>💡 Tip: Use &gt;, &lt;, &gt;=, &lt;=, = in numeric columns (e.g., "&gt;100" in Number of
-                        Subjects)</p>
-                </span>
-            </div>
-            <div id="columnToggles" class="column-toggles" style="display: none;">
-                <h3>Select Columns to Display</h3>
-                <div id="columnCheckboxes" class="checkbox-grid">
-                    <!-- Column checkboxes will be dynamically generated -->
+            <p class="browse-intro">Narrow the list by what you need (imaging modality, body region, bone shapes,
+                usage rights), then open any dataset to see all of its details.</p>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m20 20-3.5-3.5" />
+                    </svg>
+                    <input type="search" id="searchInput" autocomplete="off"
+                        placeholder="Search names, bones, conditions, remarks… (e.g. femur MRI)"
+                        aria-label="Search datasets">
                 </div>
+                <button type="button" id="openFilters" class="btn btn-ghost filters-toggle" aria-controls="filterPanel"
+                    aria-expanded="false">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M4 6h16M7 12h10M10 18h4" />
+                    </svg>
+                    Filters <span id="filterCountBadge" class="count-badge" hidden></span>
+                </button>
+                <label class="sort-control">
+                    <span>Sort</span>
+                    <select id="sortSelect" aria-label="Sort datasets"></select>
+                </label>
+                <div class="view-toggle" role="group" aria-label="Result layout">
+                    <button type="button" data-view="cards" aria-pressed="true" title="Card view">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="7" rx="1.5" />
+                            <rect x="3" y="14" width="18" height="7" rx="1.5" />
+                        </svg>
+                        Cards
+                    </button>
+                    <button type="button" data-view="table" aria-pressed="false" title="Compact table view">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" aria-hidden="true">
+                            <path d="M3 5h18M3 10h18M3 15h18M3 20h18" />
+                        </svg>
+                        Table
+                    </button>
+                </div>
+                <button type="button" id="exportCSV" class="btn btn-export" title="Download the filtered datasets (all columns) as CSV">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14" />
+                    </svg>
+                    Export CSV
+                </button>
             </div>
 
-            <div class="table-container">
-                <table id="datasetsTable">
-                    <thead>
-                        <tr id="tableHeader">
-                            <!-- Headers will be dynamically generated -->
-                        </tr>
-                        <tr id="filterRow">
-                            <!-- Filter inputs will be dynamically generated -->
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- Data rows will be dynamically generated -->
-                    </tbody>
-                </table>
+            <div class="browse-layout">
+                <aside id="filterPanel" class="filter-panel" aria-label="Filters">
+                    <div class="filter-panel-head">
+                        <strong>Filters</strong>
+                        <div>
+                            <button type="button" id="clearFilters" class="link-btn">Clear all</button>
+                            <button type="button" id="closeFilters" class="icon-btn panel-close"
+                                aria-label="Close filters">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                    <path d="M6 6l12 12M18 6 6 18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="facets"></div>
+                    <p class="facet-guide">What do the fields mean? See the
+                        <a href="https://github.com/BoneHub/Public-Datasets/blob/main/data/README.md" target="_blank"
+                            rel="noopener noreferrer">column guide</a>.
+                    </p>
+                    <div class="filter-panel-foot">
+                        <button type="button" id="applyFilters" class="btn btn-primary">Show results</button>
+                    </div>
+                </aside>
+
+                <div class="results">
+                    <div class="results-bar">
+                        <div id="datasetCount" class="result-count" aria-live="polite">Loading datasets…</div>
+                        <button type="button" id="copyViewLink" class="link-btn"
+                            title="Copy a link that reopens this exact filtered view">Copy link to this view</button>
+                    </div>
+                    <div id="activeChips" class="active-chips"></div>
+                    <div id="results"></div>
+                    <div id="showMoreWrap" class="show-more" hidden>
+                        <button type="button" id="showMore" class="btn btn-ghost">Show more</button>
+                        <button type="button" id="showAll" class="link-btn">Show all</button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -144,6 +195,41 @@
             <div id="visitor-counter" style="text-align: right; margin-top: 1rem;"></div>
         </div>
     </footer>
+
+    <div id="backdrop" class="backdrop"></div>
+    <aside id="detailDrawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle"
+        aria-hidden="true">
+        <div class="drawer-bar">
+            <div class="drawer-nav">
+                <button type="button" id="prevDataset" class="icon-btn" aria-label="Previous dataset"
+                    title="Previous dataset (←)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="m15 6-6 6 6 6" />
+                    </svg>
+                </button>
+                <span id="drawerPos" class="drawer-pos"></span>
+                <button type="button" id="nextDataset" class="icon-btn" aria-label="Next dataset"
+                    title="Next dataset (→)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="m9 6 6 6-6 6" />
+                    </svg>
+                </button>
+            </div>
+            <div class="drawer-tools">
+                <button type="button" id="copyDatasetLink" class="link-btn">Copy link</button>
+                <button type="button" id="closeDrawer" class="icon-btn" aria-label="Close details" title="Close (Esc)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6 6 18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="drawerBody" class="drawer-body"></div>
+    </aside>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="data.js"></script>
     <script src="app.js"></script>
