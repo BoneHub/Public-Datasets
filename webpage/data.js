@@ -1,6 +1,6 @@
 // Auto-generated from data/bonehub_public_datasets.json (ranked, most complete first)
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-13 08:39:14
+// Last updated: 2026-11-13 08:55:59
 
 const datasetsData = [
   {
@@ -5858,6 +5858,102 @@ const datasetsData = [
     ]
   },
   {
+    "BoneHub ID": 75,
+    "Dataset Name": "PSMA-FDG-PET-CT-Lesions",
+    "Access Link": [
+      "https://doi.org/10.57754/FDAT.rdkqd-wdh87"
+    ],
+    "Related Paper": [
+      "https://doi.org/10.1038/s41597-022-01718-3"
+    ],
+    "Country": [
+      "Germany"
+    ],
+    "Year": 2026,
+    "Size": 150.3,
+    "Remarks": [
+      "this dataset is part of autopet challenge http://www.autopet.org/",
+      "PSMA data has lower resolution compared with FDG data"
+    ],
+    "Medical Images Included": "Yes",
+    "Imaging Modality": [
+      "CT",
+      "PET"
+    ],
+    "Image Source": [
+      "Original",
+      "Adopted"
+    ],
+    "Image Source Details": [
+      "adopted data from FDG-PET-CT-Lesions dataset"
+    ],
+    "Primary Imaged Regions": [
+      "Viscerocranium",
+      "Cervical Spine",
+      "Thoracic Cage",
+      "Thoracic Spine",
+      "Abdomen",
+      "Lumbar Spine",
+      "Pelvis",
+      "Shoulder",
+      "Hip"
+    ],
+    "Secondary Imaged Regions": [
+      "Whole Body",
+      "Neurocranium",
+      "Viscerocranium",
+      "Cervical Spine",
+      "Thoracic Cage",
+      "Thoracic Spine",
+      "Abdomen",
+      "Lumbar Spine",
+      "Pelvis",
+      "Shoulder",
+      "Upper Arm",
+      "Elbow",
+      "Forearm",
+      "Wrist",
+      "Hand",
+      "Hip",
+      "Upper Leg",
+      "Knee",
+      "Lower Leg",
+      "Ankle",
+      "Foot"
+    ],
+    "Available 3D Bone Shapes": [],
+    "Additional Structures": [],
+    "Landmarks": [],
+    "Voxel Segmentation Mask": [],
+    "Mesh Model": [],
+    "CAD Model": [],
+    "Number of Subjects": 900,
+    "Available Information per Subject": [
+      "Age",
+      "Gender"
+    ],
+    "Subjects Vital Status": [],
+    "Subjects Clinical Condition": [
+      "pathological",
+      "Prostate cancer"
+    ],
+    "Access Policy": [
+      "Open Access"
+    ],
+    "Data Redistribution Policy": [
+      "Allowed"
+    ],
+    "Research Use Policy": [
+      "Allowed"
+    ],
+    "Commercial Use Policy": [
+      "Restricted"
+    ],
+    "License": [
+      "CC BY-NC 4.0"
+    ]
+  },
+  {
     "BoneHub ID": 17,
     "Dataset Name": "SAROS",
     "Access Link": [
@@ -5953,99 +6049,6 @@ const datasetsData = [
       "CC BY 4.0",
       "Other",
       "TCIA Restricted"
-    ]
-  },
-  {
-    "BoneHub ID": 75,
-    "Dataset Name": "PSMA-FDG-PET-CT-Lesions",
-    "Access Link": [
-      "https://doi.org/10.57754/FDAT.6gjsg-zcg93"
-    ],
-    "Related Paper": [],
-    "Country": [
-      "Germany"
-    ],
-    "Year": 2024,
-    "Size": 112.5,
-    "Remarks": [
-      "this dataset is part of autopet challenge http://www.autopet.org/",
-      "PSMA data has lower resolution compared with FDG data"
-    ],
-    "Medical Images Included": "Yes",
-    "Imaging Modality": [
-      "CT",
-      "PET"
-    ],
-    "Image Source": [
-      "Original",
-      "Adopted"
-    ],
-    "Image Source Details": [
-      "adopted data from FDG-PET-CT-Lesions dataset"
-    ],
-    "Primary Imaged Regions": [
-      "Viscerocranium",
-      "Cervical Spine",
-      "Thoracic Cage",
-      "Thoracic Spine",
-      "Abdomen",
-      "Lumbar Spine",
-      "Pelvis",
-      "Shoulder",
-      "Hip"
-    ],
-    "Secondary Imaged Regions": [
-      "Whole Body",
-      "Neurocranium",
-      "Viscerocranium",
-      "Cervical Spine",
-      "Thoracic Cage",
-      "Thoracic Spine",
-      "Abdomen",
-      "Lumbar Spine",
-      "Pelvis",
-      "Shoulder",
-      "Upper Arm",
-      "Elbow",
-      "Forearm",
-      "Wrist",
-      "Hand",
-      "Hip",
-      "Upper Leg",
-      "Knee",
-      "Lower Leg",
-      "Ankle",
-      "Foot"
-    ],
-    "Available 3D Bone Shapes": [],
-    "Additional Structures": [],
-    "Landmarks": [],
-    "Voxel Segmentation Mask": [],
-    "Mesh Model": [],
-    "CAD Model": [],
-    "Number of Subjects": 597,
-    "Available Information per Subject": [
-      "Age"
-    ],
-    "Subjects Vital Status": [],
-    "Subjects Clinical Condition": [
-      "pathological",
-      "Prostate cancer"
-    ],
-    "Access Policy": [
-      "Open Access"
-    ],
-    "Data Redistribution Policy": [
-      "Allowed"
-    ],
-    "Research Use Policy": [
-      "Allowed"
-    ],
-    "Commercial Use Policy": [
-      "Restricted"
-    ],
-    "License": [
-      "CC BY-NC 4.0"
     ]
   },
   {
@@ -6260,7 +6263,8 @@ const datasetsData = [
     "Remarks": [
       "the dataset is titled whole-body, but in fact, it is not. it only contains a few (at least 10) whole body (with hands slightly cut off) images. most images cover a region from hip to head.",
       "Original data (DICOM images) belong to TCIA and are not open access. However, a duplicate of the data (nii.gz format) can be downloaded freely from the two other provided links",
-      "this dataset is part of autopet challenge http://www.autopet.org/"
+      "this dataset is part of autopet challenge http://www.autopet.org/",
+      "the subjects' age and gender are provided in a CSV file, but the weight and height are not provided in the CSV file. However, they can be found in the DICOM headers of the original images."
     ],
     "Medical Images Included": "Yes",
     "Imaging Modality": [
@@ -6307,7 +6311,7 @@ const datasetsData = [
     "Voxel Segmentation Mask": [],
     "Mesh Model": [],
     "CAD Model": [],
-    "Number of Subjects": 1014,
+    "Number of Subjects": 900,
     "Available Information per Subject": [
       "Age",
       "Gender",
