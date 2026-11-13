@@ -301,7 +301,7 @@
             const url = new URL(link);
             if (url.protocol === 'http:' || url.protocol === 'https:') {
                 if (!url.searchParams.has('utm_source')) {
-                    url.searchParams.set('utm_source', 'bonehub.eu');
+                    url.searchParams.set('utm_source', 'bonehub.net');
                 }
                 return url.toString();
             }
