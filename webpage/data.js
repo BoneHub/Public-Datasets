@@ -1,6 +1,6 @@
 // Auto-generated from bonehub_public_datasets.csv
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-12 17:39:08
+// Last updated: 2026-11-13 07:48:55
 
 const datasetsData = [
   {
@@ -18,7 +18,7 @@ const datasetsData = [
     "Image Source Details": "https://digitalcommons.du.edu/visiblehuman/",
     "Primary Imaged Regions": "Whole Body; Neurocranium; Viscerocranium; Cervical Spine; Thoracic Spine; Lumbar Spine; Thoracic Cage; Abdomen; Pelvis; Shoulder; Upper Arm; Forearm; Wrist; Hand; Hip; Upper Leg; Knee; Lower Leg; Ankle; Foot",
     "Secondary Imaged Regions": "Whole Body; Neurocranium; Viscerocranium; Cervical Spine; Thoracic Spine; Lumbar Spine; Thoracic Cage; Abdomen; Shoulder; Upper Arm; Pelvis; Forearm; Wrist; Hand; Hip; Upper Leg; Knee; Lower Leg; Ankle; Foot",
-    "Available 3D Bone Shapes": "Cranial Bones; Facial Bones; Cervical Vertebrae; Thoracic Vertebrae; Lumbar Vertebrae; Coccyx; Sacrum; Ribs; Sternum; Clavicle; Scapula; Humerus; Radius; Ulna; Carpals; Metacarpals; Phalanges Hand; Hip Bones; Proximal Femur; Femur; Distal Femur; Patella; Proximal Tibia; Tibia; Distal Tibia; Proximal Fibula; Fibula; Distal Fibula; Tarsals; Metatarsals; Phalanges Foot",
+    "Available 3D Bone Shapes": "Cranial Bones; Facial Bones; Cervical Vertebrae; Thoracic Vertebrae; Lumbar Vertebrae; Sacrum; Ribs; Sternum; Clavicle; Scapula; Humerus; Radius; Ulna; Carpals; Metacarpals; Phalanges Hand; Hip Bones; Femur; Patella; Tibia; Fibula; Tarsals; Metatarsals; Phalanges Foot",
     "Additional Structures": "",
     "Landmarks": "",
     "Voxel Segmentation Mask": "Available",
