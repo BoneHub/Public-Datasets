@@ -100,6 +100,6 @@ Datasets suggested through the [issue form](https://github.com/BoneHub/Public-Da
 - **Add** a dataset by appending a new object at the end of the array, with BoneHub ID = highest existing ID + 1. Copy an existing object as a template so that every field is present.
 - **Empty values:** use `[]` for an empty list and `null` for an empty text or number.
 - **Lists:** put each value in its own item, e.g. `["CT", "MRI"]`, not `["CT; MRI"]`.
-- **Check** your edit with `python scripts/bonehub_data.py` (it lists any problem it finds). `python scripts/bonehub_data.py --format` rewrites the file in the standard layout: one field per line, each list on one line.
+- **Check** your edit with `python scripts/bonehub_data.py` (it lists any problem it finds). `python scripts/bonehub_data.py --format` rewrites the file in the standard layout (4-space indentation).
 - **Publish:** after a push to `main`, the *Update Webpage* workflow checks the file, ranks the datasets and deploys the website. If the file has a problem, the workflow fails and its log lists what to fix.
 - **New fields** must be added to `FIELDS` in [scripts/bonehub_data.py](../scripts/bonehub_data.py), to the [issue form](../.github/ISSUE_TEMPLATE/new-dataset-suggestion.yml) (with the same label), and to this guide.

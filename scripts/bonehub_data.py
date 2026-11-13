@@ -10,7 +10,8 @@ Every object has all the fields in FIELDS, in that order. Each field is one of:
             number (e.g. "more than 50 TB").
 - "list":   a list of strings, one per value; [] when empty. Items must not contain ";".
 
-Run this file to check the JSON file, or with --format to rewrite it in the standard layout:
+Run this file to check the JSON file, or with --format to rewrite it in the standard layout
+(4-space indentation):
 
     python scripts/bonehub_data.py
     python scripts/bonehub_data.py --format
@@ -166,15 +167,8 @@ def load_datasets(path: Path = DATA_PATH):
 
 
 def format_datasets(datasets) -> str:
-    """Serialize datasets in the standard layout: one field per line, each list on one line."""
-    def dump(value):
-        return json.dumps(value, ensure_ascii=False)
-
-    blocks = []
-    for record in datasets:
-        lines = [f"    {dump(field)}: {dump(value)}" for field, value in record.items()]
-        blocks.append("  {\n" + ",\n".join(lines) + "\n  }")
-    return "[\n" + ",\n".join(blocks) + "\n]\n" if blocks else "[]\n"
+    """Serialize datasets in the standard layout: JSON with 4-space indentation."""
+    return json.dumps(datasets, indent=4, ensure_ascii=False) + "\n"
 
 
 def save_datasets(datasets, path: Path = DATA_PATH):

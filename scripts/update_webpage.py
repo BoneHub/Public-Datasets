@@ -6,11 +6,12 @@ webpage/data.js for the GitHub Pages website. The JSON file itself is never reor
 in BoneHub ID order, and the ranking exists only in the generated data.js.
 """
 
+import json
 import sys
 from datetime import datetime
 from pathlib import Path
 
-from bonehub_data import DATA_PATH, DatasetError, format_datasets, load_datasets
+from bonehub_data import DATA_PATH, DatasetError, load_datasets
 
 
 def _count(items) -> int:
@@ -57,7 +58,7 @@ def generate_data_js(datasets, output_path):
         "// Do not edit manually - run scripts/update_webpage.py instead\n"
         f"// Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
         "\n"
-        f"const datasetsData = {format_datasets(datasets).rstrip()};\n"
+        f"const datasetsData = {json.dumps(datasets, indent=2, ensure_ascii=False)};\n"
     )
     with open(output_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(js_content)
