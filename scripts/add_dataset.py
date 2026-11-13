@@ -1,15 +1,20 @@
 """
 This script is designed to be called from a GitHub Action workflow when a new dataset suggestion issue
-is created. It takes the issue body and title as input, parses the markdown content of the issue body to
-extract the dataset information, normalizes the values (especially for dropdown fields), and appends the new
-dataset information as a new row in a CSV file located at `data/bonehub_public_datasets.csv`.
+is approved. It takes the issue body and title as input, parses the markdown content of the issue body to
+extract the dataset information, converts each value to its field type (multiple values separated by ";"
+or picked in a multi-select dropdown become list items), and appends the new dataset, with the next
+BoneHub ID, to the end of `data/bonehub_public_datasets.json`.
 """
 
-import sys
-import csv
 import re
+import sys
 from pathlib import Path
+
 import yaml
+
+from bonehub_data import DATA_PATH, FIELDS, ID, LIST, NUMBER, DatasetError, load_datasets, parse_number, save_datasets
+
+TEMPLATE_PATH = Path(__file__).resolve().parent.parent / ".github" / "ISSUE_TEMPLATE" / "new-dataset-suggestion.yml"
 
 
 def parse_issue_form(body: str) -> dict:
@@ -39,9 +44,6 @@ def parse_issue_form(body: str) -> dict:
         key = lines[0].strip()
         value = "\n".join(lines[1:]).strip()
 
-        # Remove empty markdown artifacts
-        value = re.sub(r"^\s*$", "", value)
-
         if value == "_No response_":
             value = ""
         fields[key] = value
@@ -49,87 +51,81 @@ def parse_issue_form(body: str) -> dict:
     return fields
 
 
-def normalize_values(row, template_path) -> dict:
-    def comma2semicolon(value: str) -> str:
-        parts = [v.strip() for v in value.split(",") if v.strip()]
-        return ";".join(parts)
-
-    # Identify dropdown fields from the template
-    dropdown_fields = set()
-
-    if template_path.exists():
-        with template_path.open("r", encoding="utf-8") as f:
-            template = yaml.safe_load(f)
-
-        for field in template.get("body", []):
-            if field.get("type") == "dropdown":
-                field_label = field.get("attributes", {}).get("label", "")
-                if field_label:
-                    dropdown_fields.add(field_label)
-
-    for key in row.keys():
-        # For dropdown fields, convert commas to semicolons
-        if key in dropdown_fields:
-            row[key] = comma2semicolon(row[key])
-        # For all fields, remove white space around semicolon-separated values
-        if ";" in row[key]:
-            parts = [v.strip() for v in row[key].split(";") if v.strip()]
-            row[key] = "; ".join(parts)
-    return row
+def dropdown_labels(template_path: Path) -> set:
+    """Labels of the dropdown fields in the issue template."""
+    if not template_path.exists():
+        return set()
+    with template_path.open("r", encoding="utf-8") as f:
+        template = yaml.safe_load(f)
+    return {
+        field.get("attributes", {}).get("label", "")
+        for field in template.get("body", [])
+        if field.get("type") == "dropdown"
+    }
 
 
-def read_csv_headers(csv_path: Path) -> list:
-    """Return the CSV header row, or an empty list when the file is missing or empty."""
-    if not csv_path.exists():
-        return []
-    with csv_path.open("r", newline="", encoding="utf-8") as f:
-        return next(csv.reader(f, delimiter=","), None) or []
+def to_list(text: str, is_dropdown: bool) -> list:
+    """
+    Split a form answer into list items. Multi-select dropdowns join their choices with ",";
+    typed answers separate entries with ";" (or put them on separate lines).
+    """
+    separators = r"[,;]" if is_dropdown else r"[;\n]"
+    items = []
+    for part in re.split(separators, text):
+        part = re.sub(r"^\s*[-*•]\s+", "", part).strip()  # drop markdown bullet markers
+        if part:
+            items.append(part)
+    return items
 
 
-def assign_bonehub_id_if_present(row: dict, csv_path: Path) -> dict:
-    """Assign the next BoneHub ID when that column exists in the CSV header."""
-    if not csv_path.exists():
-        return row
-
-    with csv_path.open("r", newline="", encoding="utf-8") as f:
-        reader = csv.reader(f, delimiter=",")
-        headers = next(reader, None)
-        if headers and "BoneHub ID" in headers:
-            row["BoneHub ID"] = str(sum(1 for _ in reader) + 1)
-
-    return row
+def issue_to_record(fields: dict, dropdowns: set) -> dict:
+    """Convert the parsed issue form into a dataset record (without a BoneHub ID)."""
+    record = {}
+    for field, kind in FIELDS.items():
+        if kind == ID:
+            continue
+        text = fields.get(field, "").strip()
+        if kind == LIST:
+            record[field] = to_list(text, field in dropdowns)
+        elif kind == NUMBER:
+            record[field] = parse_number(text)
+        else:
+            record[field] = text or None
+    return record
 
 
 if __name__ == "__main__":
     issue_body = sys.argv[1]
     issue_title = sys.argv[2]
-    csv_path = Path("data/bonehub_public_datasets.csv")
-    yaml_path = Path(".github/ISSUE_TEMPLATE/new-dataset-suggestion.yml")
 
-    csv_headers = read_csv_headers(csv_path)
-    if not csv_headers:
-        print(f"Failed. CSV file {csv_path} is missing or empty.")
+    try:
+        datasets = load_datasets()
+    except (FileNotFoundError, DatasetError) as error:
+        print(f"Failed. Could not read {DATA_PATH}:\n{error}")
         sys.exit(1)
 
-    row = parse_issue_form(issue_body)
-    row = normalize_values(row, yaml_path)
-    row = assign_bonehub_id_if_present(row, csv_path)
+    fields = parse_issue_form(issue_body)
 
-    # Only append when the issue fields match the CSV columns exactly.
-    missing = [h for h in csv_headers if h not in row]
-    unexpected = [k for k in row if k not in csv_headers]
+    # Only add the dataset when the issue fields match the dataset fields exactly.
+    expected = [field for field, kind in FIELDS.items() if kind != ID]
+    missing = [field for field in expected if field not in fields]
+    unexpected = [field for field in fields if field not in expected]
     if missing or unexpected:
-        print("Failed. Issue fields do not match CSV headers.")
+        print("Failed. Issue fields do not match the dataset fields.")
         if missing:
-            print(f"  CSV columns missing from the issue: {missing}")
+            print(f"  Dataset fields missing from the issue: {missing}")
         if unexpected:
-            print(f"  Issue fields with no matching CSV column: {unexpected}")
+            print(f"  Issue fields with no matching dataset field: {unexpected}")
         sys.exit(1)
 
-    ordered_row = {column: row[column] for column in csv_headers}
+    record = issue_to_record(fields, dropdown_labels(TEMPLATE_PATH))
+    new_id = max((d["BoneHub ID"] for d in datasets), default=0) + 1
+    datasets.append({"BoneHub ID": new_id, **record})
 
-    with csv_path.open("a", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=csv_headers, delimiter=",")
-        writer.writerow(ordered_row)
+    try:
+        save_datasets(datasets)
+    except DatasetError as error:
+        print(f"Failed. The new dataset is not valid:\n{error}")
+        sys.exit(1)
 
-    print("Dataset added successfully.")
+    print(f"Dataset added successfully with BoneHub ID {new_id}.")

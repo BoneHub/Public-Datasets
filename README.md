@@ -45,7 +45,7 @@ We provide structured metadata, links, and usage details for each dataset in bot
 
 ## Usage Instructions
 
-The complete dataset collection is available in [data/bonehub_public_datasets.csv](data/README.md). You can filter and search through the datasets using one of the following methods:
+The complete dataset collection is available in [data/bonehub_public_datasets.json](data/bonehub_public_datasets.json) (see the [data guide](data/README.md) for the format and field descriptions). You can filter and search through the datasets using one of the following methods:
 
 ---
 
@@ -59,7 +59,7 @@ Features:
 - **Card or table view**: Scan short dataset summaries, then open any dataset to see all of its details
 - **Shareable links**: The URL keeps your filters, so you can bookmark or share a filtered view or a single dataset
 - **Interactive Links**: Direct access to datasets and papers
-- **CSV Export**: Download the filtered datasets with all columns
+- **CSV Export**: Download the filtered datasets with all fields as a CSV file (e.g., for Excel)
 - **Always Up-to-date**: Automatically synchronized with our dataset collection
 
 This is the easiest way to explore and find relevant datasets!
@@ -74,12 +74,12 @@ If you're not comfortable with manual filtering or want instant results, we've p
 
 1. **Download both required files:**  
    - Skill file: [BONEHUB_PUBLIC_DATASETS_CLAUDE_SKILL.md](ai_assisted_search/BONEHUB_PUBLIC_DATASETS_CLAUDE_SKILL.md)
-   - CSV data: [bonehub_public_datasets.csv](data/bonehub_public_datasets.csv)
+   - JSON data: [bonehub_public_datasets.json](data/bonehub_public_datasets.json)
 
 2. **Upload both files to Claude.ai:**  
    - Go to [claude.ai](https://claude.ai)
    - Start a new chat
-   - Upload **both** the `.md` skill file AND the `.csv` data file. You can simply drag & drop files into the chat window.
+   - Upload **both** the `.md` skill file AND the `.json` data file. You can simply drag & drop files into the chat window.
 
 3. **Ask your question:**  
    Simply describe what you're looking for in natural language. Claude will filter the datasets and return matching results.
@@ -108,15 +108,15 @@ If you prefer to filter datasets yourself, you have two main approaches:
 
 #### **A) Using Microsoft Excel**
 
-1. Download the [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv) file
-2. Open it with Microsoft Excel
+1. Open the [website](https://bonehub.github.io/Public-Datasets/) and click **Export CSV** (with no filters set, it exports all datasets)
+2. Open the downloaded CSV file with Microsoft Excel
 3. Select the header row (row 1)
 4. Go to **Data** → **Filter** (or press Ctrl+Shift+L)
 5. Click the dropdown arrows in column headers to filter by specific values
 6. Use text filters, date filters, or custom filters to narrow down results
 
 **Filtering Semicolon-Separated Values:**  
-Many columns (e.g., `Primary Imaged Regions`, `Available 3D Bone Shapes`) contain multiple values separated by `;` in a single cell. Excel's standard filter treats the entire cell as one string, so you **cannot filter individual values** directly from the dropdown menu. However, you have two alternatives:
+In the CSV export, many columns (e.g., `Primary Imaged Regions`, `Available 3D Bone Shapes`) contain multiple values separated by `;` in a single cell. Excel's standard filter treats the entire cell as one string, so you **cannot filter individual values** directly from the dropdown menu. However, you have two alternatives:
 
 - **Use Find & Replace with Filters**: Use **Ctrl+H** to open Find & Replace, search for a specific term (e.g., "Femur"), then manually select matching rows.
 - **Use Custom AutoFilter**: Click the dropdown in a column, select **Text Filters** → **Contains**, and enter the term you're looking for (e.g., "Pelvis"). This will show all rows where that value appears anywhere in the cell.
@@ -140,8 +140,9 @@ pip install pandas
 ```python
 import pandas as pd
 
-# Load the CSV file
-df = pd.read_csv('data/bonehub_public_datasets.csv')
+# Load the JSON file (or read it straight from GitHub:
+# 'https://raw.githubusercontent.com/BoneHub/Public-Datasets/main/data/bonehub_public_datasets.json')
+df = pd.read_json('data/bonehub_public_datasets.json')
 
 # Display first few rows
 print(df.head())
@@ -153,17 +154,19 @@ print(df.columns.tolist())
 print(df.info())
 ```
 
+Fields with multiple values (e.g., `Imaging Modality`, `Primary Imaged Regions`, `Access Policy`) hold Python lists such as `['CT', 'MRI']`, so filter them with `in`.
+
 ##### **Example 1: Filter by Imaging Modality and Access Policy**
 
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/bonehub_public_datasets.csv')
+df = pd.read_json('data/bonehub_public_datasets.json')
 
 # Find all CT datasets with Open Access
 ct_open = df[
-    (df['Imaging Modality'].str.contains('CT', case=False, na=False)) &
-    (df['Access Policy'] == 'Open Access')
+    df['Imaging Modality'].apply(lambda values: 'CT' in values) &
+    df['Access Policy'].apply(lambda values: 'Open Access' in values)
 ]
 
 print(f"Found {len(ct_open)} CT datasets with Open Access")
@@ -175,13 +178,15 @@ print(ct_open[['Dataset Name', 'Year', 'Country', 'Imaging Modality', 'Access Po
 ```python
 import pandas as pd
 
-df = pd.read_csv('data/bonehub_public_datasets.csv')
+df = pd.read_json('data/bonehub_public_datasets.json')
 
 # Find datasets with Femur shapes in Available 3D Bone Shapes and Pelvis in Primary Imaged Regions
 femur_pelvis = df[
-    (df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False)) &
-    (df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False))
+    df['Available 3D Bone Shapes'].apply(lambda values: 'Femur' in values) &
+    df['Primary Imaged Regions'].apply(lambda values: 'Pelvis' in values)
 ]
+# Tip: to also match 'Proximal Femur' and 'Distal Femur', use a partial match instead:
+#   df['Available 3D Bone Shapes'].apply(lambda values: any('femur' in v.lower() for v in values))
 
 print(f"Found {len(femur_pelvis)} datasets with Femur and Pelvis region")
 print(femur_pelvis[['Dataset Name', 'Year', 'Number of Subjects', 'Mesh Model', 'License']])
@@ -196,7 +201,7 @@ We welcome contributions from the community to expand the list of datasets. You 
 
 - Report incorrect information by submitting an [issue](https://github.com/BoneHub/Public-Datasets/issues/new).
 
-- You can also make direct changes to [data/bonehub_public_datasets.csv](data/bonehub_public_datasets.csv) by a pull request!
+- You can also make direct changes to [data/bonehub_public_datasets.json](data/bonehub_public_datasets.json) by a pull request! See [Editing the Data](data/README.md#editing-the-data) for the format.
 
 ## Citation & Acknowledgment
 

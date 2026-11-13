@@ -1,4 +1,4 @@
-name: Add dataset to CSV
+name: Add dataset
 
 on:
   issues:
@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  actions: write  # needed to dispatch the Sort Datasets workflow
+  actions: write  # needed to dispatch the Update Webpage workflow
 
 jobs:
   add-dataset:
@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Parse issue and append to CSV
+      - name: Parse issue and append to the dataset JSON
         id: add_dataset
         # Pass issue text via env vars, not inline ${{ }}, so quotes/backticks/$ in it can't break or inject shell
         env:
@@ -36,21 +36,21 @@ jobs:
         id: git-check
         if: steps.add_dataset.outcome == 'success'
         run: |
-          git diff --exit-code data/bonehub_public_datasets.csv || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --exit-code data/bonehub_public_datasets.json || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
         if: steps.git-check.outputs.changed == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add data/bonehub_public_datasets.csv
+          git add data/bonehub_public_datasets.json
           git commit -m "Add dataset from issue #${{ github.event.issue.number }}"
           git push
 
       # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the
-      # Sort -> Update Webpage -> Deploy chain explicitly (workflow_dispatch is allowed).
-      - name: Trigger Sort Datasets workflow
+      # Update Webpage -> Deploy chain explicitly (workflow_dispatch is allowed).
+      - name: Trigger Update Webpage workflow
         if: steps.git-check.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run sort-datasets.yml --ref main
+        run: gh workflow run update-webpage.yml --ref main

@@ -1,7 +1,7 @@
 /* BoneHub Public Datasets — dataset browser
  *
- * Reads `datasetsData` from data.js (generated from data/bonehub_public_datasets.csv by
- * scripts/update_webpage.py) and renders:
+ * Reads `datasetsData` from data.js (generated from data/bonehub_public_datasets.json by
+ * scripts/update_webpage.py, already ranked most complete first) and renders:
  *   - a filter sidebar (facets with live counts),
  *   - results as cards or as a compact table,
  *   - a detail drawer showing every field of one dataset.
@@ -15,7 +15,8 @@
     // Configuration
     // ---------------------------------------------------------------------------------
 
-    // Column names, as they appear in the CSV header.
+    // Field names, as used in data/bonehub_public_datasets.json (and as headers of the CSV export).
+    // Values are strings, numbers, null, or (for fields with multiple values) arrays of strings.
     const COL = {
         id: 'BoneHub ID',
         name: 'Dataset Name',
@@ -240,13 +241,21 @@
         return String(value == null ? '' : value).trim().replace(/\s+/g, ' ').toLowerCase();
     }
 
+    // The items of a field: an array's entries, or a single value (text values are also split on ';').
     function splitList(value) {
         if (value == null) return [];
-        return String(value).split(';').map(s => s.trim()).filter(Boolean);
+        const items = Array.isArray(value) ? value : String(value).split(';');
+        return items.map(s => String(s == null ? '' : s).trim()).filter(Boolean);
     }
 
     function hasValue(value) {
-        return value != null && String(value).trim() !== '';
+        return splitList(value).length > 0;
+    }
+
+    // A field as plain text: list items joined with '; ' (the CSV export convention).
+    function cellText(value) {
+        if (value == null) return '';
+        return Array.isArray(value) ? value.join('; ') : String(value);
     }
 
     function toNumber(value) {
@@ -401,7 +410,7 @@
                 subjects: toNumber(row[COL.subjects]),
                 tokens,
                 regionsAll: new Set([...tokens[COL.primary], ...tokens[COL.secondary]]),
-                haystack: Object.values(row).join(' \n ').toLowerCase()
+                haystack: Object.values(row).map(cellText).join(' \n ').toLowerCase()
             };
         });
         byId = new Map(records.map(r => [r.id, r]));
@@ -876,11 +885,11 @@
         const images = norm(r[COL.images]);
         if (images === 'yes') tags.push(['Images', 'Medical images are included']);
         else if (images === 'no') tags.push(['No images', 'Medical images are not included in this dataset', true]);
-        if (hasValue(r[COL.seg])) tags.push(['Segmentations', `Voxel segmentation masks: ${r[COL.seg]}`]);
-        if (hasValue(r[COL.mesh])) tags.push(['Meshes', `Mesh models: ${r[COL.mesh]}`]);
-        if (hasValue(r[COL.cad])) tags.push(['CAD', `CAD models: ${r[COL.cad]}`]);
+        if (hasValue(r[COL.seg])) tags.push(['Segmentations', `Voxel segmentation masks: ${cellText(r[COL.seg])}`]);
+        if (hasValue(r[COL.mesh])) tags.push(['Meshes', `Mesh models: ${cellText(r[COL.mesh])}`]);
+        if (hasValue(r[COL.cad])) tags.push(['CAD', `CAD models: ${cellText(r[COL.cad])}`]);
         if (hasValue(r[COL.landmarks])) tags.push(['Landmarks', 'Anatomical landmarks are included']);
-        if (hasValue(r[COL.structures])) tags.push(['Soft tissue', `Additional structures: ${r[COL.structures]}`]);
+        if (hasValue(r[COL.structures])) tags.push(['Soft tissue', `Additional structures: ${cellText(r[COL.structures])}`]);
         return tags.map(([label, title, muted]) =>
             `<span class="tag tag-data${muted ? ' is-muted' : ''}" title="${escapeHTML(title)}">${label}</span>`).join('');
     }
@@ -1023,11 +1032,11 @@
             case 'list':
                 return escapeHTML(items.join(', '));
             case 'size':
-                return Number.isFinite(rec.size) ? numberWithNote(raw, fmtSize(rec.size)) : linkify(raw);
+                return Number.isFinite(rec.size) ? numberWithNote(raw, fmtSize(rec.size)) : linkify(cellText(raw));
             case 'int':
-                return Number.isFinite(rec.subjects) ? numberWithNote(raw, fmtInt(rec.subjects)) : linkify(raw);
+                return Number.isFinite(rec.subjects) ? numberWithNote(raw, fmtInt(rec.subjects)) : linkify(cellText(raw));
             default:
-                return linkify(raw);
+                return linkify(cellText(raw));
         }
     }
 
@@ -1055,7 +1064,7 @@
             }).join('');
             return rows ? `<div class="dsec"><h3>${escapeHTML(sec.title)}</h3><dl class="fields">${rows}</dl></div>` : '';
         });
-        // Columns added to the CSV later still show up.
+        // Fields added to the data later still show up.
         const extra = allColumns.filter(c => !covered.has(c));
         if (extra.length) {
             sections.push(`<div class="dsec"><h3>Other</h3><dl class="fields">${extra.map(c => fieldRow(rec, c, 'text')).join('')}</dl></div>`);
@@ -1070,7 +1079,7 @@
             <div class="drawer-actions">${linkButtons(rec)}</div>
             ${accessNotes.length ? `<p class="drawer-note">${accessNotes.map(linkify).join('<br>')}</p>` : ''}
             ${sections.join('')}
-            <p class="drawer-foot">Field definitions: <a href="${GUIDE_URL}" target="_blank" rel="noopener noreferrer">column guide</a>
+            <p class="drawer-foot">Field definitions: <a href="${GUIDE_URL}" target="_blank" rel="noopener noreferrer">field guide</a>
             · Something missing or outdated? <a href="${ISSUES_URL}?title=${encodeURIComponent(issueTitle)}" target="_blank" rel="noopener noreferrer">Report it</a></p>`;
     }
 
@@ -1237,7 +1246,7 @@
     }
 
     // ---------------------------------------------------------------------------------
-    // CSV export (filtered datasets, all columns, current order)
+    // CSV export (filtered datasets, all fields, current order; list items joined with '; ')
     // ---------------------------------------------------------------------------------
 
     function exportToCSV() {
@@ -1245,7 +1254,7 @@
             toast('No datasets to export. Adjust your filters.');
             return;
         }
-        const quote = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+        const quote = v => `"${cellText(v).replace(/"/g, '""')}"`;
         const lines = [allColumns.map(quote).join(',')];
         filtered.forEach(rec => lines.push(allColumns.map(c => quote(rec.row[c])).join(',')));
         const blob = new Blob(['﻿' + lines.join('\n') + '\n'], { type: 'text/csv;charset=utf-8;' });

@@ -1,62 +1,94 @@
 ---
 name: bonehub-public-datasets-query
-description: Query the BoneHub public datasets CSV - filter by columns, search within semicolon-separated values, and return results.
+description: Query the BoneHub public datasets JSON - filter by fields, match values inside list fields, and return results.
 ---
 
 # BoneHub Public Datasets Query Instructions
 
 ## Data Source
 
-**The CSV file must be uploaded to Claude along with this skill file.**
+**The JSON file must be uploaded to Claude along with this skill file.**
 
-Users should upload `bonehub_public_datasets.csv` from:
+Users should upload `bonehub_public_datasets.json` from:
 ```
-https://github.com/BoneHub/Public-Datasets/blob/main/data/bonehub_public_datasets.csv
+https://github.com/BoneHub/Public-Datasets/blob/main/data/bonehub_public_datasets.json
 ```
 
 ---
 
-## Important: Semicolon-Separated Values
+## Important: List Fields
 
-**Many columns contain multiple values separated by `;` symbol.**
+The file is a JSON array with one object per dataset. **Fields that can hold several values are JSON lists** (Python lists after loading). Empty lists (`[]`) mean "not available / not specified".
 
 Examples:
-- `Primary Imaged Regions`: `Pelvis; Hip; Upper Leg`
-- `Available 3D Bone Shapes`: `Femur; Tibia; Fibula`
-- `Available Information per Subject`: `Age; Gender; Height; Weight`
+- `Primary Imaged Regions`: `["Pelvis", "Hip", "Upper Leg"]`
+- `Available 3D Bone Shapes`: `["Femur", "Tibia", "Fibula"]`
+- `Available Information per Subject`: `["Age", "Gender", "Height", "Weight"]`
 
-**When filtering these columns, use `.str.contains()` to search within the semicolon-separated list.**
+Other fields:
+- **Numbers:** `BoneHub ID`, `Year`, `Number of Subjects` (may be empty → `NaN`), `Size` in GB (usually a number; a few entries are text such as `"more than 50 TB"`).
+- **Text:** `Dataset Name`, `Medical Images Included` (`"Yes"` or `"No"`).
+
+**Never use `.str.contains()` on list fields.** Use the helpers below.
 
 ---
 
-## Step 1: Load the Uploaded CSV File
+## Step 1: Load the Uploaded JSON File
 
-**The user must upload the CSV file (`bonehub_public_datasets.csv`) to this conversation along with this skill file.**
+**The user must upload the JSON file (`bonehub_public_datasets.json`) to this conversation along with this skill file.**
 
 ```python
+import re
 import pandas as pd
 
-# Read the uploaded CSV file
-df = pd.read_csv('/mnt/data/bonehub_public_datasets.csv')
+# Read the uploaded JSON file
+df = pd.read_json('/mnt/data/bonehub_public_datasets.json')
 
 print(f"Loaded {len(df)} datasets")
 print(f"Columns: {list(df.columns)}")
+
+
+def has_any(column, *values):
+    """Rows whose list in `column` contains at least one of `values` (whole item, case-insensitive)."""
+    wanted = {v.lower() for v in values}
+    return df[column].apply(lambda items: any(item.lower() in wanted for item in items))
+
+
+def has_all(column, *values):
+    """Rows whose list in `column` contains every one of `values` (whole item, case-insensitive)."""
+    wanted = {v.lower() for v in values}
+    return df[column].apply(lambda items: wanted <= {item.lower() for item in items})
+
+
+def mentions(column, pattern):
+    """Rows where any item of the list in `column` matches the regex `pattern` (case-insensitive).
+    Use for free-text lists such as clinical conditions, landmarks, remarks."""
+    rx = re.compile(pattern, re.IGNORECASE)
+    return df[column].apply(lambda items: any(rx.search(item) for item in items))
+
+
+def is_filled(column):
+    """Rows where the list in `column` is not empty."""
+    return df[column].apply(len) > 0
+
+
+size_gb = pd.to_numeric(df['Size'], errors='coerce')  # Size as numbers (text entries become NaN)
 ```
 
-**Note:** The file path is `/mnt/data/bonehub_public_datasets.csv` for files uploaded to Claude.
+**Note:** The file path is `/mnt/data/bonehub_public_datasets.json` for files uploaded to Claude.
 
-`BoneHub ID` is the first column in the CSV and is the unique internal identifier for each dataset. Use it whenever the user asks for a dataset ID or when returning results that should be easy to reference unambiguously.
+`BoneHub ID` is the first field and is the unique internal identifier for each dataset. Use it whenever the user asks for a dataset ID or when returning results that should be easy to reference unambiguously.
 
 ---
 
-## Keyword Synonyms — Translate User Terms to CSV Terms
+## Keyword Synonyms — Translate User Terms to Data Values
 
-Users may describe filters using natural language that doesn't exactly match the CSV values. **Always translate user terms to the actual CSV keywords listed below before filtering.**
+Users may describe filters using natural language that doesn't exactly match the values in the data. **Always translate user terms to the actual values listed below before filtering.** When a row lists several values, pass all of them to `has_any(...)`.
 
 ---
 
 ### Medical Images Included
-Possible CSV values: `Yes`, `No`
+Possible values: `Yes`, `No`
 
 | User says | Search for |
 |---|---|
@@ -66,7 +98,7 @@ Possible CSV values: `Yes`, `No`
 ---
 
 ### Imaging Modality
-Possible CSV values: `CT`, `CBCT`, `MRI`, `X-ray`, `Ultrasound`, `PET`, `SPECT`, `Other`
+Possible values: `CT`, `CBCT`, `MRI`, `X-ray`, `Ultrasound`, `PET`, `SPECT`, `Other`
 
 | User says | Search for |
 |---|---|
@@ -81,7 +113,7 @@ Possible CSV values: `CT`, `CBCT`, `MRI`, `X-ray`, `Ultrasound`, `PET`, `SPECT`,
 ---
 
 ### Image Source
-Possible CSV values: `Original`, `Adopted`
+Possible values: `Original`, `Adopted`
 
 | User says | Search for |
 |---|---|
@@ -91,39 +123,40 @@ Possible CSV values: `Original`, `Adopted`
 ---
 
 ### Primary Imaged Regions / Secondary Imaged Regions
-Possible CSV values: `Whole Body`, `Neurocranium`, `Viscerocranium`, `Cervical Spine`, `Thoracic Spine`, `Lumbar Spine`, `Thoracic Cage`, `Abdomen`, `Pelvis`, `Shoulder`, `Upper Arm`, `Forearm`, `Wrist`, `Hand`, `Hip`, `Upper Leg`, `Knee`, `Lower Leg`, `Ankle`, `Foot`
+Possible values: `Whole Body`, `Neurocranium`, `Viscerocranium`, `Cervical Spine`, `Thoracic Spine`, `Lumbar Spine`, `Thoracic Cage`, `Abdomen`, `Pelvis`, `Shoulder`, `Upper Arm`, `Elbow`, `Forearm`, `Wrist`, `Hand`, `Hip`, `Upper Leg`, `Knee`, `Lower Leg`, `Ankle`, `Foot`
 
 | User says | Search for |
 |---|---|
 | whole body, full body, total body | `Whole Body` |
 | skull, cranium, brain case, neurocranium | `Neurocranium` |
 | face, facial, jaw, viscerocranium | `Viscerocranium` |
-| head, cranial | `Neurocranium\|Viscerocranium` |
+| head, cranial | `Neurocranium`, `Viscerocranium` |
 | neck, cervical, cervical spine | `Cervical Spine` |
 | thoracic spine, mid back, upper back, thoracic vertebrae | `Thoracic Spine` |
 | lumbar spine, lower back, lumbar | `Lumbar Spine` |
-| spine, spinal, vertebra, vertebrae, back | `Cervical Spine\|Thoracic Spine\|Lumbar Spine` |
+| spine, spinal, vertebra, vertebrae, back | `Cervical Spine`, `Thoracic Spine`, `Lumbar Spine` |
 | ribcage, rib cage, thorax, chest, sternum, thoracic cage | `Thoracic Cage` |
 | abdomen, abdominal | `Abdomen` |
 | pelvis, pelvic, hip bone | `Pelvis` |
 | shoulder, glenohumeral | `Shoulder` |
 | upper arm, humerus region | `Upper Arm` |
+| elbow | `Elbow` |
 | forearm, radius ulna region | `Forearm` |
-| arm, upper extremity, upper limb | `Upper Arm\|Forearm` |
+| arm, upper extremity, upper limb | `Upper Arm`, `Forearm` |
 | wrist | `Wrist` |
 | hand, fingers | `Hand` |
 | hip joint, hip replacement, THR, THA, arthroplasty | `Hip` |
 | thigh, upper leg, femur region | `Upper Leg` |
 | knee, knee replacement, TKR, TKA | `Knee` |
 | lower leg, shin, tibia fibula region | `Lower Leg` |
-| leg, lower extremity, lower limb | `Upper Leg\|Lower Leg` |
+| leg, lower extremity, lower limb | `Upper Leg`, `Lower Leg` |
 | ankle | `Ankle` |
 | foot, feet, toes | `Foot` |
 
 ---
 
 ### Available 3D Bone Shapes
-Possible CSV values: `Cranial Bones`, `Facial Bones`, `Cervical Vertebrae`, `Thoracic Vertebrae`, `Lumbar Vertebrae`, `Sacrum`, `Coccyx`, `Ribs`, `Sternum`, `Clavicle`, `Scapula`, `Humerus`, `Radius`, `Ulna`, `Carpals`, `Metacarpals`, `Phalanges Hand`, `Hip Bones`, `Proximal Femur`, `Femur`, `Distal Femur`, `Patella`, `Proximal Tibia`, `Tibia`, `Distal Tibia`, `Proximal Fibula`, `Fibula`, `Distal Fibula`, `Tarsals`, `Metatarsals`, `Phalanges Foot`
+Possible values: `Cranial Bones`, `Facial Bones`, `Cervical Vertebrae`, `Thoracic Vertebrae`, `Lumbar Vertebrae`, `Sacrum`, `Coccyx`, `Ribs`, `Sternum`, `Clavicle`, `Scapula`, `Humerus`, `Radius`, `Ulna`, `Carpals`, `Metacarpals`, `Phalanges Hand`, `Hip Bones`, `Proximal Femur`, `Femur`, `Distal Femur`, `Patella`, `Proximal Tibia`, `Tibia`, `Distal Tibia`, `Proximal Fibula`, `Fibula`, `Distal Fibula`, `Tarsals`, `Metatarsals`, `Phalanges Foot`
 
 | User says | Search for |
 |---|---|
@@ -132,7 +165,7 @@ Possible CSV values: `Cranial Bones`, `Facial Bones`, `Cervical Vertebrae`, `Tho
 | neck vertebrae, C1-C7 | `Cervical Vertebrae` |
 | thoracic vertebrae, T1-T12 | `Thoracic Vertebrae` |
 | lumbar vertebrae, L1-L5 | `Lumbar Vertebrae` |
-| vertebrae, spine, vertebral bodies | `Cervical Vertebrae\|Thoracic Vertebrae\|Lumbar Vertebrae` |
+| vertebrae, spine, vertebral bodies | `Cervical Vertebrae`, `Thoracic Vertebrae`, `Lumbar Vertebrae` |
 | sacrum | `Sacrum` |
 | coccyx, tailbone | `Coccyx` |
 | ribs, rib bones | `Ribs` |
@@ -147,13 +180,13 @@ Possible CSV values: `Cranial Bones`, `Facial Bones`, `Cervical Vertebrae`, `Tho
 | phalanges, finger bones, hand phalanges | `Phalanges Hand` |
 | hip bones, ilium, ischium, pubis, acetabulum | `Hip Bones` |
 | proximal femur, femoral head, femoral neck | `Proximal Femur` |
-| femur, thigh bone | `Femur` |
+| femur, thigh bone | `Femur` (add `Proximal Femur`, `Distal Femur` if partial femurs are acceptable) |
 | distal femur, femoral condyles | `Distal Femur` |
 | patella, kneecap | `Patella` |
 | proximal tibia, tibial plateau | `Proximal Tibia` |
-| tibia, shin bone | `Tibia` |
+| tibia, shin bone | `Tibia` (add `Proximal Tibia`, `Distal Tibia` if partial tibias are acceptable) |
 | distal tibia | `Distal Tibia` |
-| fibula | `Fibula` |
+| fibula | `Fibula` (add `Proximal Fibula`, `Distal Fibula` if partial fibulas are acceptable) |
 | tarsals, ankle bones | `Tarsals` |
 | metatarsals, foot bones | `Metatarsals` |
 | phalanges foot, toe bones | `Phalanges Foot` |
@@ -161,40 +194,40 @@ Possible CSV values: `Cranial Bones`, `Facial Bones`, `Cervical Vertebrae`, `Tho
 ---
 
 ### Voxel Segmentation Mask
-Possible CSV values: `Available`, `Supervised Segmentation`, `Automatic Segmentation`
+Possible values: `Available`, `Supervised Segmentation`, `Automatic Segmentation`
 
 | User says | Search for |
 |---|---|
-| has segmentation, segmentation masks, segmented | `Available` |
+| has segmentation, segmentation masks, segmented | any value (`is_filled(...)`) |
 | manual segmentation, expert segmentation, human annotated | `Supervised Segmentation` |
 | automatic segmentation, auto segmentation, AI segmentation | `Automatic Segmentation` |
 
 ---
 
 ### Mesh Model
-Possible CSV values: `Available`, `Supervised 3D Reconstruction`, `Automatic 3D Reconstruction`
+Possible values: `Available`, `Supervised 3D Reconstruction`, `Automatic 3D Reconstruction`
 
 | User says | Search for |
 |---|---|
-| has mesh, mesh models, STL, OBJ, PLY, surface model | `Available` |
+| has mesh, mesh models, STL, OBJ, PLY, surface model | any value (`is_filled(...)`) |
 | manual reconstruction, expert reconstruction | `Supervised 3D Reconstruction` |
 | automatic reconstruction, auto mesh, AI reconstruction | `Automatic 3D Reconstruction` |
 
 ---
 
 ### CAD Model
-Possible CSV values: `Available`, `Supervised CAD Modeling`, `Automatic CAD Modeling`
+Possible values: `Available`, `Supervised CAD Modeling`, `Automatic CAD Modeling`
 
 | User says | Search for |
 |---|---|
-| has CAD, CAD models, STEP, IGES | `Available` |
+| has CAD, CAD models, STEP, IGES | any value (`is_filled(...)`) |
 | manual CAD, expert CAD | `Supervised CAD Modeling` |
 | automatic CAD, auto CAD modeling | `Automatic CAD Modeling` |
 
 ---
 
 ### Subjects Vital Status
-Possible CSV values: `Alive`, `Postmortem`
+Possible values: `Alive`, `Postmortem`
 
 | User says | Search for |
 |---|---|
@@ -204,7 +237,7 @@ Possible CSV values: `Alive`, `Postmortem`
 ---
 
 ### Access Policy
-Possible CSV values: `Open Access`, `Restricted`, `Simple Registration`, `Payment Required`
+Possible values: `Open Access`, `Restricted`, `Simple Registration`, `Payment Required`
 
 | User says | Search for |
 |---|---|
@@ -216,7 +249,7 @@ Possible CSV values: `Open Access`, `Restricted`, `Simple Registration`, `Paymen
 ---
 
 ### Data Redistribution Policy / Research Use Policy / Commercial Use Policy
-Possible CSV values: `Allowed`, `Restricted`, `Not Specified`
+Possible values: `Allowed`, `Restricted`, `Not Specified`
 
 | User says | Search for |
 |---|---|
@@ -226,76 +259,78 @@ Possible CSV values: `Allowed`, `Restricted`, `Not Specified`
 
 ---
 
-**When in doubt**, use broad `.str.contains()` with synonyms joined by `|` rather than exact match. Example:
+### Free-text list fields
+`Subjects Clinical Condition`, `Available Information per Subject`, `Additional Structures`, `Landmarks`, `Remarks`, `Country`, `License` and `Image Source Details` are not limited to fixed values. **When in doubt, use `mentions()` with synonyms joined by `|`** rather than an exact match. Example:
 ```python
-# User says "redistribution not allowed" — map to the correct CSV value
-result = df[df['Data Redistribution Policy'].str.contains('Restricted', case=False, na=False)]
+# User says "osteoarthritis or arthritic knees"
+result = df[mentions('Subjects Clinical Condition', 'osteoarthritis|arthritis|OA')]
 ```
 
 ---
 
 ## Step 2: Filter the Data
 
-### Filtering Semicolon-Separated Columns
-
-For columns with multiple values (e.g., `Primary Imaged Regions`, `Available 3D Bone Shapes`), use partial matching:
+### Filtering List Fields
 
 ```python
 # Find datasets with "Pelvis" in Primary Imaged Regions
-result = df[df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)]
+result = df[has_any('Primary Imaged Regions', 'Pelvis')]
 
-# Find datasets with "Femur" in Available 3D Bone Shapes  
-result = df[df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
+# Find datasets with "Femur" in Available 3D Bone Shapes
+result = df[has_any('Available 3D Bone Shapes', 'Femur')]
 
-# Find datasets with "CT" imaging modality
-result = df[df['Imaging Modality'].str.contains('CT', case=False, na=False)]
+# Find datasets with "CT" imaging modality (does not match "CBCT")
+result = df[has_any('Imaging Modality', 'CT')]
 ```
 
 ### Filtering by Multiple Values (OR condition)
 
 ```python
 # Find datasets with Pelvis OR Hip in Primary Imaged Regions
-result = df[df['Primary Imaged Regions'].str.contains('Pelvis|Hip', case=False, na=False)]
+result = df[has_any('Primary Imaged Regions', 'Pelvis', 'Hip')]
 
 # Find datasets with CT OR MRI imaging
-result = df[df['Imaging Modality'].str.contains('CT|MRI', case=False, na=False)]
+result = df[has_any('Imaging Modality', 'CT', 'MRI')]
 ```
 
 ### Filtering by Multiple Conditions (AND condition)
 
 ```python
 # Find datasets with Pelvis AND from USA
-result = df[
-    (df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)) &
-    (df['Country'] == 'USA')
-]
+result = df[has_any('Primary Imaged Regions', 'Pelvis') & has_any('Country', 'USA')]
 
 # Find CT datasets from 2023 or later with Femur
 result = df[
-    (df['Imaging Modality'].str.contains('CT', case=False, na=False)) &
+    has_any('Imaging Modality', 'CT') &
     (df['Year'] >= 2023) &
-    (df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False))
+    has_any('Available 3D Bone Shapes', 'Femur')
 ]
+
+# Datasets that provide BOTH age and gender per subject
+result = df[has_all('Available Information per Subject', 'Age', 'Gender')]
 ```
 
-### Filtering Exact Matches
+### Filtering Numbers and Text
 
 ```python
-# Find datasets from specific country
-result = df[df['Country'] == 'USA']
-
-# Find datasets from specific year
+# Datasets from a specific year
 result = df[df['Year'] == 2023]
 
-# Find datasets with Open Access
-result = df[df['Access Policy'] == 'Open Access']
+# Datasets with 100 or more subjects
+result = df[df['Number of Subjects'] >= 100]
+
+# Datasets smaller than 10 GB (text sizes are excluded)
+result = df[size_gb < 10]
+
+# Datasets that include medical images
+result = df[df['Medical Images Included'] == 'Yes']
 ```
 
 ---
 
 ## Step 3: Return Results
 
-Always include these **base columns** in the output, plus any columns the user specifically asked about:
+Always include these **base columns** in the output, plus any columns the user specifically asked about. List fields are joined with `; ` for display:
 
 ```python
 # Base columns always shown
@@ -307,11 +342,18 @@ query_cols = ['Country', 'Year', 'Primary Imaged Regions', 'Imaging Modality']  
 # Combine, preserving order and avoiding duplicates
 columns_to_show = base_cols + [c for c in query_cols if c not in base_cols]
 
+
+def as_table(frame, columns):
+    """Markdown table with list fields joined by '; '."""
+    shown = frame[columns].apply(lambda col: col.map(lambda v: '; '.join(v) if isinstance(v, list) else v))
+    return shown.to_markdown(index=False)
+
+
 print(f"Found {len(result)} datasets")
-print(result[columns_to_show].to_markdown(index=False))
+print(as_table(result, columns_to_show))
 ```
 
-**Always present the result as a Markdown table** using `.to_markdown(index=False)`. This renders as a clean table for the user. Install `tabulate` if needed: `pip install tabulate`.
+**Always present the result as a Markdown table** using `as_table(...)`. This renders as a clean table for the user. Install `tabulate` if needed: `pip install tabulate`.
 
 **Column selection examples:**
 
@@ -337,37 +379,37 @@ result = df[df['BoneHub ID'] == 109]
 
 ---
 
-## CSV Columns Reference
+## Fields Reference
 
-- `BoneHub ID`: Unique BoneHub identifier for the dataset
-- `Dataset Name`: Name of the dataset
-- `Access Link`: URL to access the dataset
-- `Related Paper`: Associated publication
-- `Country`: Country of origin
-- `Year`: Publication/release year
-- `Size`: Dataset size
-- `Remarks`: Additional notes
-- `Medical Images Included`: Whether medical images are included
-- `Imaging Modality`: CT, MRI, X-ray, etc. (can be multiple, separated by `;`)
-- `Image Source`: Original or Adopted
-- `Image Source Details`: Additional source information
-- `Primary Imaged Regions`: **Semicolon-separated** list (e.g., `Pelvis; Hip; Upper Leg`)
-- `Secondary Imaged Regions`: **Semicolon-separated** list
-- `Available 3D Bone Shapes`: **Semicolon-separated** list (e.g., `Femur; Tibia; Fibula`)
-- `Additional Structures`: Other anatomical structures
-- `Landmarks`: Anatomical landmarks
-- `Voxel Segmentation Mask`: Availability status
-- `Mesh Model`: Availability status
-- `CAD Model`: Availability status  
-- `Number of Subjects`: Number of subjects/patients
-- `Available Information per Subject`: **Semicolon-separated** list (e.g., `Age; Gender; Height`)
-- `Subjects Vital Status`: Alive/Deceased status
-- `Subjects Clinical Condition`: Clinical conditions
-- `Access Policy`: Open Access, Registration Required, etc.
-- `Data Redistribution Policy`: Allowed/Not Allowed
-- `Research Use Policy`: Usage terms for research
-- `Commercial Use Policy`: Usage terms for commercial purposes
-- `License`: License type (e.g., CC BY 4.0)
+- `BoneHub ID` (number): Unique BoneHub identifier for the dataset
+- `Dataset Name` (text): Name of the dataset
+- `Access Link` (list): URLs to access the dataset
+- `Related Paper` (list): Associated publications
+- `Country` (list): Country of origin
+- `Year` (number): Publication/release year
+- `Size` (number, sometimes text): Dataset size in GB
+- `Remarks` (list): Additional notes, one per item
+- `Medical Images Included` (text): `Yes` or `No`
+- `Imaging Modality` (list): CT, MRI, X-ray, etc.
+- `Image Source` (list): Original and/or Adopted
+- `Image Source Details` (list): Source datasets of adopted images
+- `Primary Imaged Regions` (list): e.g. `["Pelvis", "Hip", "Upper Leg"]`
+- `Secondary Imaged Regions` (list)
+- `Available 3D Bone Shapes` (list): e.g. `["Femur", "Tibia", "Fibula"]`
+- `Additional Structures` (list): Other anatomical structures
+- `Landmarks` (list): Anatomical landmarks
+- `Voxel Segmentation Mask` (list): Availability and how the masks were made
+- `Mesh Model` (list): Availability and how the meshes were made
+- `CAD Model` (list): Availability and how the CAD models were made
+- `Number of Subjects` (number): Number of subjects/patients
+- `Available Information per Subject` (list): e.g. `["Age", "Gender", "Height"]`
+- `Subjects Vital Status` (list): Alive and/or Postmortem
+- `Subjects Clinical Condition` (list): Clinical conditions
+- `Access Policy` (list): Open Access, Restricted, Simple Registration, Payment Required
+- `Data Redistribution Policy` (list): Allowed, Restricted, Not Specified
+- `Research Use Policy` (list): Allowed, Restricted, Not Specified
+- `Commercial Use Policy` (list): Allowed, Restricted, Not Specified
+- `License` (list): License types (e.g. CC BY 4.0)
 
 ---
 
@@ -377,30 +419,30 @@ result = df[df['BoneHub ID'] == 109]
 
 ```python
 # Pelvis datasets
-df[df['Primary Imaged Regions'].str.contains('Pelvis', case=False, na=False)]
+df[has_any('Primary Imaged Regions', 'Pelvis')]
 
 # Femur in 3D bone shapes
-df[df['Available 3D Bone Shapes'].str.contains('Femur', case=False, na=False)]
+df[has_any('Available 3D Bone Shapes', 'Femur')]
 
 # Spine (any type)
-df[df['Primary Imaged Regions'].str.contains('Spine', case=False, na=False)]
+df[has_any('Primary Imaged Regions', 'Cervical Spine', 'Thoracic Spine', 'Lumbar Spine')]
 ```
 
 ### By Imaging Type
 
 ```python
-# CT scans only
-df[df['Imaging Modality'].str.contains('CT', case=False, na=False)]
+# CT scans
+df[has_any('Imaging Modality', 'CT')]
 
-# MRI scans only
-df[df['Imaging Modality'].str.contains('MRI', case=False, na=False)]
+# MRI scans
+df[has_any('Imaging Modality', 'MRI')]
 ```
 
 ### By Country and Year
 
 ```python
 # USA datasets
-df[df['Country'] == 'USA']
+df[has_any('Country', 'USA')]
 
 # Dataset with a known BoneHub ID
 df[df['BoneHub ID'] == 109]
@@ -409,39 +451,39 @@ df[df['BoneHub ID'] == 109]
 df[df['Year'] >= 2023]
 
 # USA datasets from 2023+
-df[(df['Country'] == 'USA') & (df['Year'] >= 2023)]
+df[has_any('Country', 'USA') & (df['Year'] >= 2023)]
 ```
 
 ### By Access Policy
 
 ```python
-# Open access only
-df[df['Access Policy'] == 'Open Access']
+# Open access
+df[has_any('Access Policy', 'Open Access')]
 
 # Datasets allowing commercial use
-df[df['Commercial Use Policy'].str.contains('Allowed', case=False, na=False)]
+df[has_any('Commercial Use Policy', 'Allowed')]
 ```
 
 ### By Available Data
 
 ```python
 # Datasets with mesh models
-df[df['Mesh Model'] == 'Available']
+df[is_filled('Mesh Model')]
 
 # Datasets with segmentation masks
-df[df['Voxel Segmentation Mask'] == 'Available']
+df[is_filled('Voxel Segmentation Mask')]
 
 # Datasets with age and gender information
-df[df['Available Information per Subject'].str.contains('Age.*Gender|Gender.*Age', case=False, na=False)]
+df[has_all('Available Information per Subject', 'Age', 'Gender')]
 ```
 
 ---
 
 ## Tips
 
-1. **Always use `.str.contains()` with `na=False`** for semicolon-separated columns
-2. **Use `case=False`** for case-insensitive search
-3. **Use `|` for OR conditions** within `.str.contains()`: `'Pelvis|Hip'`
-4. **Use `&` for AND conditions** between different filters
-5. **Use `==` for exact matches** on single-value columns like Country, Year
+1. **List fields hold Python lists** — use `has_any`, `has_all`, `mentions` or `is_filled`, never `.str.contains()`
+2. **`has_any`/`has_all` match whole items, case-insensitively**: `'CT'` does not match `'CBCT'`
+3. **Use `mentions(column, 'a|b')`** for partial or synonym matches in free-text lists
+4. **Use `&` for AND conditions** between different filters, `|` for OR between filters
+5. **Use `==`, `>=`, `<`** on number fields (`Year`, `Number of Subjects`, `size_gb`)
 6. **Check column names** if unsure: `print(df.columns.tolist())`

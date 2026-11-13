@@ -1,48 +1,50 @@
 name: Update Webpage
 
 on:
-  # Allow manual trigger
+  # Allow manual trigger (also used by the Add dataset workflow)
   workflow_dispatch:
 
-  # Trigger only after sorting workflow finishes
-  workflow_run:
-    workflows: ["Sort Datasets"]
+  # Rebuild the website data whenever the datasets or the scripts that process them change
+  push:
     branches:
       - main
-    types:
-      - completed
+    paths:
+      - 'data/bonehub_public_datasets.json'
+      - 'scripts/bonehub_data.py'
+      - 'scripts/update_webpage.py'
 
 permissions:
   contents: write
 
 jobs:
   update-webpage:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      
+
+      # Checks the dataset JSON (fails with a list of problems if it is invalid),
+      # ranks the datasets and writes webpage/data.js
       - name: Run update script
         run: |
           python scripts/update_webpage.py
-      
+
       - name: Check for changes
         id: git-check
         run: |
           git diff --exit-code webpage/data.js || echo "changed=true" >> $GITHUB_OUTPUT
-      
+
       - name: Commit and push changes
         if: steps.git-check.outputs.changed == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add webpage/data.js
-          git commit -m "Update webpage data from CSV [automated]"
+          git commit -m "Update webpage data [automated]"
           git push
