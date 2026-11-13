@@ -11,7 +11,7 @@ Every object has all the fields in FIELDS, in that order. Each field is one of:
 - "list":   a list of strings, one per value; [] when empty. Items must not contain ";".
 
 Run this file to check the JSON file, or with --format to rewrite it in the standard layout
-(4-space indentation):
+(2-space indentation):
 
     python scripts/bonehub_data.py
     python scripts/bonehub_data.py --format
@@ -167,8 +167,12 @@ def load_datasets(path: Path = DATA_PATH):
 
 
 def format_datasets(datasets) -> str:
-    """Serialize datasets in the standard layout: JSON with 4-space indentation."""
-    return json.dumps(datasets, indent=4, ensure_ascii=False) + "\n"
+    """
+    Serialize datasets in the standard layout. It matches what VS Code's JSON formatter writes on
+    save (2-space indentation, one list item per line, no final newline), so saving the file in
+    VS Code and running the scripts never re-indent it.
+    """
+    return json.dumps(datasets, indent=2, ensure_ascii=False)
 
 
 def save_datasets(datasets, path: Path = DATA_PATH):
