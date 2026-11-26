@@ -1,6 +1,6 @@
 // Auto-generated from data/bonehub_public_datasets.json (ranked, most complete first)
 // Do not edit manually - run scripts/update_webpage.py instead
-// Last updated: 2026-11-13 08:55:59
+// Last updated: 2026-11-26 08:55:37
 
 const datasetsData = [
   {
@@ -1106,6 +1106,7 @@ const datasetsData = [
       "https://huggingface.co/datasets/mrmrx/CADS-dataset"
     ],
     "Related Paper": [
+      "https://doi.org/10.1038/s41467-026-78732-1",
       "https://doi.org/10.48550/arXiv.2507.22953"
     ],
     "Country": [
